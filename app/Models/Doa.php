@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -23,19 +25,12 @@ class Doa extends Model
         'is_published',
     ];
 
-    protected $casts = [
-        'doa_category_id' => 'integer',
-        'is_published' => 'boolean',
-    ];
-
-    public function getRouteKeyName(): string
+    protected function casts(): array
     {
-        return 'slug';
-    }
-
-    public function doaCategory(): BelongsTo
-    {
-        return $this->belongsTo(DoaCategory::class, 'doa_category_id');
+        return [
+            'doa_category_id' => 'integer',
+            'is_published' => 'boolean',
+        ];
     }
 
     public function category(): BelongsTo

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,9 +18,12 @@ class DoaCategory extends Model
         'urutan',
     ];
 
-    protected $casts = [
-        'urutan' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'urutan' => 'integer',
+        ];
+    }
 
     public function doas(): HasMany
     {

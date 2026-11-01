@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,12 +16,6 @@ class LastRead extends Model
         'user_id',
         'surah_id',
         'ayah_id',
-    ];
-
-    protected $casts = [
-        'user_id' => 'integer',
-        'surah_id' => 'integer',
-        'ayah_id' => 'integer',
     ];
 
     public function user(): BelongsTo

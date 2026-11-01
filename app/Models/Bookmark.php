@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,11 +18,6 @@ class Bookmark extends Model
         'bookmarkable_type',
         'bookmarkable_id',
         'catatan',
-    ];
-
-    protected $casts = [
-        'user_id' => 'integer',
-        'bookmarkable_id' => 'integer',
     ];
 
     public function user(): BelongsTo

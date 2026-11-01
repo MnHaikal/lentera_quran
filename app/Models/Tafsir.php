@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,10 +16,6 @@ class Tafsir extends Model
         'ayah_id',
         'sumber',
         'isi',
-    ];
-
-    protected $casts = [
-        'ayah_id' => 'integer',
     ];
 
     public function ayah(): BelongsTo

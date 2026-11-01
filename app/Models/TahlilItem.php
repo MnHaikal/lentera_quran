@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -21,15 +23,18 @@ class TahlilItem extends Model
         'is_published',
     ];
 
-    protected $casts = [
-        'urutan' => 'integer',
-        'jumlah_baca' => 'integer',
-        'is_published' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'urutan' => 'integer',
+            'jumlah_baca' => 'integer',
+            'is_published' => 'boolean',
+        ];
+    }
 
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('is_published', true);
+        return $query->where('is_published', true)->orderBy('urutan', 'asc');
     }
 }
 

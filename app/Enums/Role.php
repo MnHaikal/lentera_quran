@@ -1,21 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 enum Role: string
 {
-    case SuperAdmin = 'super_admin';
-    case Admin = 'admin';
-    case User = 'user';
+    case SUPER_ADMIN = 'super_admin';
+    case ADMIN = 'admin';
+    case USER = 'user';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::SUPER_ADMIN => 'Super Admin',
+            self::ADMIN => 'Admin',
+            self::USER => 'User',
+        };
+    }
 
     public function isAdmin(): bool
     {
-        return $this === self::SuperAdmin || $this === self::Admin;
+        return $this === self::ADMIN || $this === self::SUPER_ADMIN;
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this === self::SuperAdmin;
+        return $this === self::SUPER_ADMIN;
+    }
+
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
     }
 }
 

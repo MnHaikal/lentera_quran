@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,12 +25,15 @@ class Ayah extends Model
         'audio_url',
     ];
 
-    protected $casts = [
-        'surah_id' => 'integer',
-        'nomor_ayat' => 'integer',
-        'juz' => 'integer',
-        'halaman' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'surah_id' => 'integer',
+            'nomor_ayat' => 'integer',
+            'juz' => 'integer',
+            'halaman' => 'integer',
+        ];
+    }
 
     public function surah(): BelongsTo
     {

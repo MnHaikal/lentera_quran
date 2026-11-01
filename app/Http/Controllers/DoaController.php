@@ -1,110 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Enums\BookmarkType;
+use App\Models\Bookmark;
 use App\Models\Doa;
 use App\Models\DoaCategory;
-use Database\Seeders\DoaSeeder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DoaController extends Controller
 {
-    private const PER_PAGE = 8;
-
     public function index(Request $request): View
     {
-        $this->ensureSeeded();
+        $categorySlug = $request->query('kategori');
+        $q = trim((string) $request->query('q', ''));
 
-        $search = trim((string) $request->query('q', ''));
-        $sort = (string) $request->query('sort', 'urutan');
+        $categories = DoaCategory::orderBy('urutan')->withCount(['doas' => function ($q) {
+            $q->where('is_published', true);
+        }])->get();
 
-        $query = DoaCategory::query()
-            ->with(['doas' => static fn ($q) => $q->published()->orderBy('id')])
-            ->withCount(['doas' => static fn ($q) => $q->published()]);
+        $doasQuery = Doa::published()->with('category');
 
-        if ($search !== '') {
-            $query->where(function ($builder) use ($search): void {
-                $builder->where('nama', 'like', "%{$search}%")
-                    ->orWhereHas('doas', static function ($doaQuery) use ($search): void {
-                        $doaQuery->published()->where(function ($sub) use ($search): void {
-                            $sub->where('judul', 'like', "%{$search}%")
-                                ->orWhere('terjemahan', 'like', "%{$search}%")
-                                ->orWhere('teks_latin', 'like', "%{$search}%")
-                                ->orWhere('sumber', 'like', "%{$search}%");
-                        });
-                    });
+        if (!empty($categorySlug)) {
+            $doasQuery->whereHas('category', function ($catQuery) use ($categorySlug) {
+                $catQuery->where('slug', $categorySlug);
             });
         }
 
-        match ($sort) {
-            'nama' => $query->orderBy('nama'),
-            'jumlah-doa' => $query->orderByDesc('doas_count')->orderBy('urutan'),
-            'urutan-desc' => $query->orderByDesc('urutan'),
-            default => $query->orderBy('urutan'),
-        };
-
-        $categories = $query->paginate(self::PER_PAGE)->withQueryString();
-        $totalDoaCount = Doa::query()->published()->count();
-
-        return view('doa.index', [
-            'categories' => $categories,
-            'totalDoaCount' => $totalDoaCount,
-            'search' => $search,
-            'sort' => $sort,
-        ]);
-    }
-
-    public function show(Request $request, string $slug): View
-    {
-        $this->ensureSeeded();
-
-        $category = DoaCategory::query()
-            ->where('slug', $slug)
-            ->first();
-
-        $targetDoaSlug = trim((string) $request->query('doa', ''));
-
-        if (! $category) {
-            $matchedDoa = Doa::query()->published()->where('slug', $slug)->firstOrFail();
-            $category = $matchedDoa->doaCategory;
-            $targetDoaSlug = $matchedDoa->slug;
+        if ($q !== '') {
+            $doasQuery->where(function ($searchQuery) use ($q) {
+                $searchQuery->where('judul', 'like', "%{$q}%")
+                    ->orWhere('terjemahan', 'like', "%{$q}%")
+                    ->orWhere('teks_latin', 'like', "%{$q}%");
+            });
         }
 
-        $doas = $category->doas()
-            ->published()
-            ->orderBy('id')
-            ->get();
+        $doas = $doasQuery->latest()->paginate(12)->withQueryString();
 
-        $allCategories = DoaCategory::query()
-            ->withCount(['doas' => static fn ($q) => $q->published()])
-            ->orderBy('urutan')
-            ->get();
-
-        $previousCategory = $allCategories
-            ->where('urutan', '<', $category->urutan)
-            ->sortByDesc('urutan')
-            ->first();
-
-        $nextCategory = $allCategories
-            ->where('urutan', '>', $category->urutan)
-            ->sortBy('urutan')
-            ->first();
-
-        return view('doa.show', [
-            'category' => $category,
-            'doas' => $doas,
-            'allCategories' => $allCategories,
-            'previousCategory' => $previousCategory,
-            'nextCategory' => $nextCategory,
-            'targetDoaSlug' => $targetDoaSlug !== '' ? $targetDoaSlug : null,
-        ]);
+        return view('doa.index', compact('categories', 'doas', 'categorySlug', 'q'));
     }
 
-    private function ensureSeeded(): void
+    public function show(Doa $doa, Request $request): View
     {
-        if (DoaCategory::query()->count() === 0 || Doa::query()->count() === 0) {
-            app(DoaSeeder::class)->run();
+        abort_unless($doa->is_published, 404, 'Doa tidak ditemukan atau belum dipublikasikan.');
+
+        $isBookmarked = false;
+        if ($request->user()) {
+            $isBookmarked = Bookmark::where('user_id', $request->user()->id)
+                ->where('bookmarkable_type', BookmarkType::DOA->value)
+                ->where('bookmarkable_id', $doa->id)
+                ->exists();
         }
+
+        return view('doa.show', compact('doa', 'isBookmarked'));
     }
 }
