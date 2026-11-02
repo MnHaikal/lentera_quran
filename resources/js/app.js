@@ -91,6 +91,10 @@ document.addEventListener('alpine:init', () => {
 
             audio.onended = () => {
                 this.isPlaying = false;
+                const nextBtn = document.querySelector(`[data-ayah-play="${this.ayahNumber + 1}"]`);
+                if (nextBtn) {
+                    nextBtn.click();
+                }
             };
         },
 

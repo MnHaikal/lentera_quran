@@ -135,40 +135,79 @@
                             </svg>
                             Riwayat Membaca
                         </span>
-                        <span class="text-label-sm text-ink-muted">Kemarin, 20:15 WIB</span>
+                        <span class="text-label-sm text-ink-muted">
+                            {{ $lastRead ? $lastRead->updated_at->diffForHumans() : 'Belum ada riwayat' }}
+                        </span>
                     </div>
 
                     <h2 class="text-headline-sm text-ink">Lanjutkan Bacaan Terakhir</h2>
 
-                    <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
-                        <div class="flex items-center justify-between gap-2">
-                            <p class="text-body-md font-bold text-ink">QS. Al-Baqarah: Ayat 255</p>
-                            <span class="text-label-md text-brand-gold font-bold">Juz {{ $dailyAyah?->juz ?? 3 }}</span>
-                        </div>
-                        <p class="text-body-sm text-ink-muted">Ayat Kursi · Surah ke-2</p>
+                    @if ($lastRead && $lastRead->surah)
+                        @php
+                            $lrSurah = $lastRead->surah;
+                            $lrAyahNum = $lastRead->ayah?->nomor_ayat ?? 1;
+                            $lrProgress = min(100, round(($lrAyahNum / max(1, $lrSurah->jumlah_ayat)) * 100));
+                        @endphp
+                        <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-body-md font-bold text-ink">QS. {{ $lrSurah->nama_latin }}: Ayat {{ $lrAyahNum }}</p>
+                                <span class="text-label-md text-brand-gold font-bold">Juz {{ $lastRead->ayah?->juz ?? 1 }}</span>
+                            </div>
+                            <p class="text-body-sm text-ink-muted">{{ $lrSurah->arti }} · Surah ke-{{ $lrSurah->id }}</p>
 
-                        <div class="space-y-1.5 pt-1">
-                            <div class="flex items-center justify-between text-label-sm text-ink-muted">
-                                <span>Progress Surah</span>
-                                <span class="font-semibold text-ink">89%</span>
-                            </div>
-                            <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
-                                <div class="h-full w-[89%] rounded-full bg-brand-teal"></div>
+                            <div class="space-y-1.5 pt-1">
+                                <div class="flex items-center justify-between text-label-sm text-ink-muted">
+                                    <span>Progress Surah</span>
+                                    <span class="font-semibold text-ink">{{ $lrProgress }}%</span>
+                                </div>
+                                <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
+                                    <div class="h-full rounded-full bg-brand-teal" style="width: {{ $lrProgress }}%;"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <p class="text-body-md font-bold text-ink">QS. Al-Baqarah: Ayat 255</p>
+                                <span class="text-label-md text-brand-gold font-bold">Juz {{ $dailyAyah?->juz ?? 3 }}</span>
+                            </div>
+                            <p class="text-body-sm text-ink-muted">Ayat Kursi · Surah ke-2</p>
+
+                            <div class="space-y-1.5 pt-1">
+                                <div class="flex items-center justify-between text-label-sm text-ink-muted">
+                                    <span>Pilihan Harian</span>
+                                    <span class="font-semibold text-ink">Mulai Sekarang</span>
+                                </div>
+                                <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
+                                    <div class="h-full w-[100%] rounded-full bg-brand-teal"></div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="flex items-center justify-between pt-1">
-                    <span class="text-body-sm text-ink-muted">Ayat 255 dari 286</span>
-                    <a
-                        href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                        wire:navigate
-                        class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
-                    >
-                        <span>Lanjutkan</span>
-                        <span aria-hidden="true">&rarr;</span>
-                    </a>
+                    @if ($lastRead && $lastRead->surah)
+                        <span class="text-body-sm text-ink-muted">Ayat {{ $lrAyahNum }} dari {{ $lrSurah->jumlah_ayat }}</span>
+                        <a
+                            href="{{ route('quran.show', ['surah' => $lastRead->surah_id, 'ayat' => $lrAyahNum]) }}"
+                            wire:navigate
+                            class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
+                        >
+                            <span>Lanjutkan</span>
+                            <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    @else
+                        <span class="text-body-sm text-ink-muted">Ayat 255 dari 286</span>
+                        <a
+                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
+                            wire:navigate
+                            class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
+                        >
+                            <span>Mulai Baca</span>
+                            <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    @endif
                 </div>
             </div>
 

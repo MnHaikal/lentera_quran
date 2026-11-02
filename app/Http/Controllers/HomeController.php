@@ -25,11 +25,16 @@ class HomeController extends Controller
 
         $alKahf = Surah::find(18);
 
+        $lastRead = auth()->check()
+            ? auth()->user()->lastRead()->with(['surah', 'ayah'])->first()
+            : null;
+
         return view('beranda', [
             'previewSurahs' => $previewSurahs,
             'dailyAyah' => $dailyAyah,
             'alKahf' => $alKahf,
             'totalSurahs' => Surah::count() ?: 114,
+            'lastRead' => $lastRead,
         ]);
     }
 }

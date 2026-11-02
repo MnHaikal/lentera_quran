@@ -71,6 +71,10 @@ class QuranController extends Controller
             ? $surah->ayahs()->where('nomor_ayat', 255)->first()
             : null;
 
+        $bookmarkedAyahIds = auth()->check()
+            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'ayah')->pluck('bookmarkable_id')->all()
+            : [];
+
         return view('quran.show', [
             'surah' => $surah,
             'ayahs' => $ayahs,
@@ -81,6 +85,7 @@ class QuranController extends Controller
             'featuredAyah' => $featuredAyah,
             'previousSurah' => Surah::find($surah->id - 1),
             'nextSurah' => Surah::find($surah->id + 1),
+            'bookmarkedAyahIds' => $bookmarkedAyahIds,
         ]);
     }
 

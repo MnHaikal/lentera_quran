@@ -21,6 +21,47 @@
             fontSize: 36,
             showDescriptionModal: false,
             copiedAyah: null,
+            bookmarkedAyahs: @json($bookmarkedAyahIds ?? []),
+            async toggleBookmark(ayahId) {
+                if (!@json(auth()->check())) {
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                }
+                try {
+                    const res = await fetch(`/ayat/${ayahId}/simpan`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await res.json();
+                    if (data.bookmarked) {
+                        if (!this.bookmarkedAyahs.includes(ayahId)) {
+                            this.bookmarkedAyahs.push(ayahId);
+                        }
+                    } else {
+                        this.bookmarkedAyahs = this.bookmarkedAyahs.filter(id => id !== ayahId);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            },
+            async shareAyah(ayahNumber, arab, translation) {
+                const shareData = {
+                    title: 'QS. {{ addslashes($surah->nama_latin) }}: ' + ayahNumber,
+                    text: 'QS. {{ addslashes($surah->nama_latin) }}: Ayat ' + ayahNumber + '\n\n' + arab + '\n\n&quot;' + translation + '&quot;\n\nBaca di Lentera Quran: ' + window.location.origin + '/al-quran/{{ $surah->id }}?ayat=' + ayahNumber,
+                    url: window.location.origin + '/al-quran/{{ $surah->id }}?ayat=' + ayahNumber
+                };
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                    } catch (e) {}
+                } else {
+                    this.copyAyahText(ayahNumber, arab, translation);
+                }
+            },
             decreaseFont() {
                 this.fontSize = Math.max(24, this.fontSize - 2);
                 document.documentElement.style.setProperty('--quran-font-size', this.fontSize + 'px');
@@ -301,6 +342,7 @@
                                 @if ($ayah->audio_url)
                                     <button
                                         type="button"
+                                        data-ayah-play="{{ $ayah->nomor_ayat }}"
                                         @click="$store.audioPlayer.playTrack({ surahId: {{ $surah->id }}, surahName: '{{ addslashes($surah->nama_latin) }}', ayahNumber: {{ $ayah->nomor_ayat }}, src: '{{ $ayah->audio_url }}' })"
                                         class="inline-flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-full text-label-md font-semibold transition"
                                         :class="$store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying
@@ -314,10 +356,12 @@
 
                                 <button
                                     type="button"
+                                    @click="toggleBookmark({{ $ayah->id }})"
                                     aria-label="Simpan penanda ayat {{ $ayah->nomor_ayat }}"
-                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold hover:bg-surface-low transition"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full transition"
+                                    :class="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'text-brand-gold bg-brand-gold/15' : 'text-ink-muted hover:text-brand-gold hover:bg-surface-low'"
                                 >
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <svg class="w-4 h-4" :fill="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                                     </svg>
                                 </button>
@@ -330,6 +374,17 @@
                                 >
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                                    </svg>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="shareAyah({{ $ayah->nomor_ayat }}, @js($ayah->teks_arab), @js($ayah->terjemahan))"
+                                    aria-label="Bagikan ayat {{ $ayah->nomor_ayat }}"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold hover:bg-surface-low transition"
+                                >
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
                                     </svg>
                                 </button>
 
@@ -446,5 +501,25 @@
             </nav>
         </div>
     </div>
+
+    @auth
+        @if ($ayahs->isNotEmpty())
+            <script>
+                (function () {
+                    try {
+                        fetch('{{ route('terakhir-dibaca.store', $surah->id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ ayah_id: {{ $ayahs->first()->id }} })
+                        }).catch(function () {});
+                    } catch (e) {}
+                })();
+            </script>
+        @endif
+    @endauth
 </x-app-layout>
 
