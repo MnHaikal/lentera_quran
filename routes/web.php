@@ -35,10 +35,14 @@ Route::get('/al-quran/{surah}', [QuranController::class, 'show'])
 Route::get('/tahlil', [TahlilController::class, 'index'])
     ->name('tahlil.index');
 
+Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])
+    ->whereNumber('urutan')
+    ->name('tahlil.show');
+
 Route::get('/doa', [DoaController::class, 'index'])
     ->name('doa.index');
 
-Route::get('/doa/{doa:slug}', [DoaController::class, 'show'])
+Route::get('/doa/{slug}', [DoaController::class, 'show'])
     ->name('doa.show');
 
 Route::middleware('auth')->group(function () {

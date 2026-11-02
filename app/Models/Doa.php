@@ -38,6 +38,11 @@ class Doa extends Model
         return $this->belongsTo(DoaCategory::class, 'doa_category_id');
     }
 
+    public function doaCategory(): BelongsTo
+    {
+        return $this->belongsTo(DoaCategory::class, 'doa_category_id');
+    }
+
     public function bookmarks(): MorphMany
     {
         return $this->morphMany(Bookmark::class, 'bookmarkable');
