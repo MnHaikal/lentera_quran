@@ -22,6 +22,33 @@
             showGuide: false,
             activeDoaSlug: @js($firstDoaSlug),
             copiedDoaId: null,
+            bookmarkedDoas: @json($bookmarkedDoaIds ?? []),
+            async toggleDoaBookmark(doaId, doaSlug) {
+                if (!@json(auth()->check())) {
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                }
+                try {
+                    const res = await fetch(`/doa/${doaSlug}/simpan`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await res.json();
+                    if (data.bookmarked) {
+                        if (!this.bookmarkedDoas.includes(doaId)) {
+                            this.bookmarkedDoas.push(doaId);
+                        }
+                    } else {
+                        this.bookmarkedDoas = this.bookmarkedDoas.filter(id => id !== doaId);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            },
             decreaseFont() {
                 this.fontSize = Math.max(24, this.fontSize - 2);
                 document.documentElement.style.setProperty('--quran-font-size', this.fontSize + 'px');
@@ -324,6 +351,20 @@
                                 >
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                                    </svg>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click.stop="toggleDoaBookmark({{ $doa->id }}, '{{ $doa->slug }}')"
+                                    :aria-label="bookmarkedDoas.includes({{ $doa->id }}) ? 'Hapus penanda doa' : 'Simpan doa ini'"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full transition"
+                                    :class="bookmarkedDoas.includes({{ $doa->id }})
+                                        ? 'text-brand-gold bg-brand-navy shadow-sm'
+                                        : 'text-ink-muted hover:text-brand-gold hover:bg-surface-low'"
+                                >
+                                    <svg class="w-4 h-4" :class="bookmarkedDoas.includes({{ $doa->id }}) ? 'fill-current' : 'fill-none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                                     </svg>
                                 </button>
 

@@ -22,6 +22,27 @@
             showDescriptionModal: false,
             copiedAyah: null,
             bookmarkedAyahs: @json($bookmarkedAyahIds ?? []),
+            isSurahBookmarked: @json($isSurahBookmarked ?? false),
+            async toggleSurahBookmark() {
+                if (!@json(auth()->check())) {
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                }
+                try {
+                    const res = await fetch('{{ route('bookmark.surah', $surah->id) }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await res.json();
+                    this.isSurahBookmarked = !!data.bookmarked;
+                } catch (e) {
+                    console.error(e);
+                }
+            },
             async toggleBookmark(ayahId) {
                 if (!@json(auth()->check())) {
                     window.location.href = '{{ route('login') }}';
@@ -232,6 +253,20 @@
                             <span>Putar Surah Penuh</span>
                         </button>
                     @endif
+
+                    <button
+                        type="button"
+                        @click="toggleSurahBookmark()"
+                        class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full border text-body-sm font-semibold transition"
+                        :class="isSurahBookmarked
+                            ? 'bg-brand-gold text-brand-navy border-brand-gold shadow-sm font-bold'
+                            : 'border-white/25 bg-white/5 text-white hover:bg-white/10'"
+                    >
+                        <svg class="w-4 h-4 shrink-0" :class="isSurahBookmarked ? 'fill-current' : 'fill-none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                        </svg>
+                        <span x-text="isSurahBookmarked ? 'Surah Tersimpan' : 'Simpan Surah'">Simpan Surah</span>
+                    </button>
 
                     @if ($surah->deskripsi)
                         <button

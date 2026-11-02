@@ -91,6 +91,10 @@ class DoaController extends Controller
             ->sortBy('urutan')
             ->first();
 
+        $bookmarkedDoaIds = auth()->check()
+            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'doa')->pluck('bookmarkable_id')->all()
+            : [];
+
         return view('doa.show', [
             'category' => $category,
             'doas' => $doas,
@@ -98,6 +102,7 @@ class DoaController extends Controller
             'previousCategory' => $previousCategory,
             'nextCategory' => $nextCategory,
             'targetDoaSlug' => $targetDoaSlug !== '' ? $targetDoaSlug : null,
+            'bookmarkedDoaIds' => $bookmarkedDoaIds,
         ]);
     }
 

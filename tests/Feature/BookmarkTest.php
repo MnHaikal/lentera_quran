@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\Role;
+use App\Models\Ayah;
 use App\Models\Bookmark;
+use App\Models\Doa;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -107,5 +109,43 @@ class BookmarkTest extends TestCase
         ]);
 
         $response->assertStatus(403);
+    }
+
+    public function test_user_can_toggle_ayah_bookmark(): void
+    {
+        $user = User::factory()->create(['role' => Role::USER]);
+        $ayah = Ayah::first();
+
+        $response = $this->actingAs($user)->postJson("/ayat/{$ayah->id}/simpan");
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'created',
+            'bookmarked' => true,
+        ]);
+
+        $this->assertDatabaseHas('bookmarks', [
+            'user_id' => $user->id,
+            'bookmarkable_type' => 'ayah',
+            'bookmarkable_id' => $ayah->id,
+        ]);
+    }
+
+    public function test_user_can_toggle_doa_bookmark(): void
+    {
+        $user = User::factory()->create(['role' => Role::USER]);
+        $doa = Doa::first();
+
+        $response = $this->actingAs($user)->postJson("/doa/{$doa->slug}/simpan");
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'created',
+            'bookmarked' => true,
+        ]);
+
+        $this->assertDatabaseHas('bookmarks', [
+            'user_id' => $user->id,
+            'bookmarkable_type' => 'doa',
+            'bookmarkable_id' => $doa->id,
+        ]);
     }
 }

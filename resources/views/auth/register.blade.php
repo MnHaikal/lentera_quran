@@ -151,27 +151,6 @@
             </button>
         </div>
 
-        <div class="relative flex items-center py-2">
-            <div class="flex-grow border-t border-line/80"></div>
-            <span class="shrink-0 mx-4 text-label-sm text-ink-muted">atau daftar dengan</span>
-            <div class="flex-grow border-t border-line/80"></div>
-        </div>
-
-        <div>
-            <button
-                type="button"
-                class="w-full min-h-[46px] rounded-xl border border-line bg-surface-card hover:bg-surface-low px-4 py-2.5 inline-flex items-center justify-center gap-2.5 text-body-sm font-bold text-brand-navy dark:text-ink transition shadow-sm"
-            >
-                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.2-.9 2.3-1.9 3l3.1 2.4c1.8-1.7 2.8-4.1 2.8-7 0-.7-.1-1.5-.2-2.3H12z" />
-                    <path fill="#34A853" d="M12 22c2.6 0 4.8-.9 6.4-2.4l-3.1-2.4c-.9.6-2 .9-3.3.9-2.5 0-4.7-1.7-5.5-4H3.3v2.5C4.9 19.8 8.2 22 12 22z" />
-                    <path fill="#4A90E2" d="M6.5 14.1c-.2-.6-.3-1.3-.3-2.1s.1-1.5.3-2.1V7.4H3.3C2.5 9 2 10.5 2 12s.5 3 1.3 4.6l3.2-2.5z" />
-                    <path fill="#FBBC05" d="M12 5.9c1.4 0 2.7.5 3.7 1.4l2.8-2.8C16.8 2.9 14.6 2 12 2 8.2 2 4.9 4.2 3.3 7.4l3.2 2.5c.8-2.3 3-4 5.5-4z" />
-                </svg>
-                <span>Google</span>
-            </button>
-        </div>
-
         <p class="pt-3 text-center text-body-sm text-ink-muted">
             Sudah punya akun?
             <a
