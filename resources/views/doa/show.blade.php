@@ -156,8 +156,8 @@
         {{-- Kontainer Utama Mushaf (max-w-mushaf = 840px sesuai halaman Detail Surah) --}}
         <div class="max-w-mushaf mx-auto px-gutter-mobile md:px-gutter py-8 md:py-10 space-y-6">
             {{-- Banner Header Kategori Doa (Deep Navy) --}}
-            <section class="rounded-card bg-gradient-to-b from-[#0A223D] via-[#0F2D4F] to-[#0A223D] text-white p-6 sm:p-10 shadow-lg border border-white/10 text-center space-y-5">
-                <div class="flex flex-wrap items-center justify-center gap-2">
+            <section class="rounded-card bg-gradient-to-b from-[#0A223D] via-[#0F2D4F] to-[#0A223D] text-white px-6 py-8 sm:px-10 sm:py-10 shadow-lg border border-white/10 text-center space-y-6">
+                <div class="flex flex-wrap items-center justify-center gap-2.5">
                     <span class="px-3.5 py-1 rounded-full bg-white/10 border border-white/10 text-label-sm font-bold uppercase tracking-wider text-brand-gold">
                         Kategori Ke-{{ $category->urutan }}
                     </span>
@@ -169,19 +169,19 @@
                     </span>
                 </div>
 
-                <div class="space-y-2 pt-1">
-                    <p class="font-arabic text-4xl sm:text-5xl text-brand-gold leading-relaxed" dir="rtl" lang="ar">
+                <div class="flex flex-col items-center pt-1">
+                    <p class="quran-banner-title text-brand-gold py-1" dir="rtl" lang="ar">
                         أَدْعِيَةٌ مَأْثُوْرَةٌ
                     </p>
-                    <h1 class="text-headline-lg sm:text-4xl font-bold text-white tracking-tight">
+                    <h1 class="text-headline-lg sm:text-4xl font-bold text-white tracking-tight mt-2">
                         {{ $category->nama }}
                     </h1>
-                    <p class="text-body-sm sm:text-body-md text-[#8FB2D6] italic max-w-2xl mx-auto">
+                    <p class="text-body-sm sm:text-body-md text-[#8FB2D6] italic max-w-2xl mx-auto mt-2">
                         "{{ $doaSummaryList }}"
                     </p>
                 </div>
 
-                <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+                <div class="flex flex-wrap items-center justify-center gap-3.5 pt-1">
                     @if ($doas->isNotEmpty())
                         <button
                             type="button"
@@ -214,11 +214,11 @@
                     Awali doa dengan memuji Allah SWT (tahmid) dan membaca shalawat kepada Rasulullah SAW, hadirkan hati dengan penuh harap (raja’) serta keyakinan bahwa Allah mengabulkan doa.
                 </div>
 
-                <div class="pt-5 mt-4 border-t border-white/10 space-y-1.5">
-                    <p class="font-arabic text-3xl sm:text-4xl text-brand-gold leading-relaxed" dir="rtl" lang="ar">
+                <div class="pt-6 mt-2 border-t border-white/15 flex flex-col items-center gap-2.5">
+                    <p class="quran-banner-basmalah text-brand-gold py-1" dir="rtl" lang="ar">
                         بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
                     </p>
-                    <p class="text-label-sm text-[#8FB2D6]">
+                    <p class="text-body-sm text-[#8FB2D6]">
                         Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.
                     </p>
                 </div>

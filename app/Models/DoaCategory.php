@@ -13,6 +13,7 @@ class DoaCategory extends Model
     protected $fillable = [
         'nama',
         'slug',
+        'deskripsi',
         'urutan',
     ];
 

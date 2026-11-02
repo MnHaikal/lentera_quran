@@ -16,7 +16,7 @@ class PublicPagesAndNavigationTest extends TestCase
     {
         $routes = [
             ['name' => 'beranda', 'uri' => '/', 'title' => 'Beranda', 'heading' => 'Terangi Hari dengan Cahaya'],
-            ['name' => 'quran.index', 'uri' => '/al-quran', 'title' => 'Daftar Surah', 'heading' => 'Daftar Surah'],
+            ['name' => 'quran.index', 'uri' => '/al-quran', 'title' => "Al-Qur'an", 'heading' => 'Daftar Surah'],
             ['name' => 'tahlil.index', 'uri' => '/tahlil', 'title' => 'Bacaan Tahlil', 'heading' => 'Tahlil'],
             ['name' => 'doa.index', 'uri' => '/doa', 'title' => 'Kumpulan Doa', 'heading' => 'Doa'],
         ];
@@ -91,10 +91,10 @@ class PublicPagesAndNavigationTest extends TestCase
         $guestResponse->assertOk();
         $guestResponse->assertSee('Masuk');
 
-        $user = User::factory()->create(['name' => 'Ahmad Fulan']);
+        $user = User::factory()->create();
         $authResponse = $this->actingAs($user)->get('/');
         $authResponse->assertOk();
-        $authResponse->assertSee('Ahmad Fulan');
+        $authResponse->assertSee($user->name);
         $authResponse->assertSee('Keluar');
     }
 

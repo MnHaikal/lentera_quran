@@ -14,7 +14,40 @@
     <form
         method="POST"
         action="{{ route('login') }}"
-        x-data="{ showPassword: false }"
+        novalidate
+        x-data="{
+            showPassword: false,
+            submitting: false,
+            email: @js(old('email', '')),
+            emailError: @js($errors->first('email') ?: ''),
+            emailTouched: false,
+            validateEmail() {
+                const val = (this.email || '').trim();
+                if (!val) {
+                    this.emailError = 'Alamat email wajib diisi.';
+                    return false;
+                }
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(val)) {
+                    this.emailError = 'Format alamat email tidak valid (contoh: nama@email.com).';
+                    return false;
+                }
+                this.emailError = '';
+                return true;
+            },
+            handleSubmit(e) {
+                this.emailTouched = true;
+                const emailOk = this.validateEmail();
+                if (!emailOk) {
+                    e.preventDefault();
+                    this.submitting = false;
+                    this.$refs.emailInput?.focus();
+                    return false;
+                }
+                this.submitting = true;
+            }
+        }"
+        @submit="handleSubmit($event)"
         class="space-y-5"
     >
         @csrf
@@ -30,18 +63,46 @@
                     </svg>
                 </span>
                 <input
+                    x-ref="emailInput"
                     id="email"
                     type="email"
                     name="email"
-                    value="{{ old('email') }}"
+                    x-model="email"
+                    @blur="emailTouched = true; validateEmail()"
+                    @input="if (emailTouched || emailError) validateEmail()"
                     placeholder="nama@email.com"
+                    maxlength="150"
                     required
                     autofocus
                     autocomplete="username"
-                    class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
+                    :aria-invalid="emailError ? 'true' : 'false'"
+                    aria-describedby="email-error"
+                    :class="emailError ? 'border-red-500 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]' : 'border-line focus:border-brand-teal focus:shadow-teal-ring'"
+                    class="w-full min-h-[48px] rounded-xl bg-surface-card border pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:ring-0 focus:outline-none"
                 >
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            
+            {{-- Peringatan Kesalahan Format Email --}}
+            <div id="email-error" class="mt-2 min-h-[20px]">
+                <template x-if="emailError">
+                    <p class="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                        </svg>
+                        <span x-text="emailError"></span>
+                    </p>
+                </template>
+                @if ($errors->has('email'))
+                    <noscript>
+                        <p class="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5">
+                            <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            <span>{{ $errors->first('email') }}</span>
+                        </p>
+                    </noscript>
+                @endif
+            </div>
         </div>
 
         <div>
@@ -59,14 +120,17 @@
                     :type="showPassword ? 'text' : 'password'"
                     name="password"
                     placeholder="••••••••"
+                    maxlength="64"
                     required
                     autocomplete="current-password"
+                    @if ($errors->has('password')) aria-invalid="true" aria-describedby="password-error" @endif
                     class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-11 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
                 >
                 <button
                     type="button"
                     @click="showPassword = !showPassword"
                     :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'"
+                    :aria-pressed="showPassword.toString()"
                     class="absolute inset-y-0 right-0 flex items-center pr-4 text-ink-muted hover:text-ink transition"
                 >
                     <svg x-show="!showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -78,7 +142,7 @@
                     </svg>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-input-error id="password-error" :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div class="flex items-center justify-between pt-0.5">
@@ -106,33 +170,13 @@
         <div class="pt-1">
             <button
                 type="submit"
-                class="w-full min-h-[50px] rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy text-body-md font-bold shadow-sm inline-flex items-center justify-center gap-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-2"
+                :disabled="submitting"
+                class="w-full min-h-[50px] rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy text-body-md font-bold shadow-sm inline-flex items-center justify-center gap-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                <span>Masuk ke Akun</span>
+                <span x-text="submitting ? 'Memproses...' : 'Masuk ke Akun'">Masuk ke Akun</span>
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
-            </button>
-        </div>
-
-        <div class="relative flex items-center py-2">
-            <div class="flex-grow border-t border-line/80"></div>
-            <span class="shrink-0 mx-4 text-label-sm text-ink-muted">atau masuk dengan</span>
-            <div class="flex-grow border-t border-line/80"></div>
-        </div>
-
-        <div>
-            <button
-                type="button"
-                class="w-full min-h-[46px] rounded-xl border border-line bg-surface-card hover:bg-surface-low px-4 py-2.5 inline-flex items-center justify-center gap-2.5 text-body-sm font-bold text-brand-navy dark:text-ink transition shadow-sm"
-            >
-                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.2-.9 2.3-1.9 3l3.1 2.4c1.8-1.7 2.8-4.1 2.8-7 0-.7-.1-1.5-.2-2.3H12z" />
-                    <path fill="#34A853" d="M12 22c2.6 0 4.8-.9 6.4-2.4l-3.1-2.4c-.9.6-2 .9-3.3.9-2.5 0-4.7-1.7-5.5-4H3.3v2.5C4.9 19.8 8.2 22 12 22z" />
-                    <path fill="#4A90E2" d="M6.5 14.1c-.2-.6-.3-1.3-.3-2.1s.1-1.5.3-2.1V7.4H3.3C2.5 9 2 10.5 2 12s.5 3 1.3 4.6l3.2-2.5z" />
-                    <path fill="#FBBC05" d="M12 5.9c1.4 0 2.7.5 3.7 1.4l2.8-2.8C16.8 2.9 14.6 2 12 2 8.2 2 4.9 4.2 3.3 7.4l3.2 2.5c.8-2.3 3-4 5.5-4z" />
-                </svg>
-                <span>Google</span>
             </button>
         </div>
 

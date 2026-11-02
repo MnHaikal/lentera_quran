@@ -81,6 +81,22 @@
         direction: rtl;
     }
 
+    .quran-banner-title {
+        font-family: 'Amiri Quran', 'Amiri', serif;
+        font-size: clamp(2.125rem, 4vw, 2.875rem);
+        line-height: 2.15;
+        font-weight: 400;
+        direction: rtl;
+    }
+
+    .quran-banner-basmalah {
+        font-family: 'Amiri Quran', 'Amiri', serif;
+        font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+        line-height: 2.25;
+        font-weight: 400;
+        direction: rtl;
+    }
+
     .lq-card {
         @apply bg-surface-card border border-line rounded-card shadow-card p-5 sm:p-6;
     }

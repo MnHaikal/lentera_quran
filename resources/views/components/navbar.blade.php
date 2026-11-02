@@ -36,21 +36,14 @@
                 href="{{ route('beranda') }}"
                 wire:navigate
                 wire:navigate.hover
-                class="inline-flex items-center gap-3 min-h-[44px] rounded-lg px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                class="inline-flex items-center gap-2.5 min-h-[44px] rounded-lg px-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
             >
                 <img
-                    src="{{ asset('images/logo-icon-lentera-quran.png') }}"
-                    alt="Logo Lentera Quran"
-                    class="w-11 h-11 object-contain shrink-0"
+                    src="{{ asset('images/logo-lentera-quran.png') }}"
+                    alt="Lentera Quran"
+                    class="h-12 sm:h-14 w-auto object-contain"
                 >
-                <span class="flex flex-col">
-                    <span class="text-headline-sm font-bold tracking-tight text-ink leading-tight">
-                        Lentera Quran
-                    </span>
-                    <span class="text-[10px] font-bold tracking-[0.14em] uppercase text-brand-teal leading-tight mt-0.5">
-                        Mushaf &amp; Tadabbur
-                    </span>
-                </span>
+                <span class="sr-only">Lentera Quran</span>
             </a>
 
             <a
@@ -101,16 +94,18 @@
         </nav>
 
         <div class="flex items-center gap-2">
-            <a
-                href="{{ route('quran.index') }}"
-                wire:navigate
-                aria-label="Penanda bacaan tersimpan"
-                class="hidden sm:inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-ink-muted hover:text-ink hover:bg-surface-container/60 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-            >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                </svg>
-            </a>
+            @auth
+                <a
+                    href="{{ route('quran.index') }}"
+                    wire:navigate
+                    aria-label="Penanda bacaan tersimpan"
+                    class="hidden sm:inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-ink-muted hover:text-ink hover:bg-surface-container/60 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                >
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                    </svg>
+                </a>
+            @endauth
 
             <div x-data="{ themeMenuOpen: false }" class="relative">
                 <button
@@ -179,6 +174,15 @@
                         class="absolute right-0 mt-2 w-48 rounded-card bg-surface-card border border-line shadow-card py-1.5 z-50"
                         role="menu"
                     >
+                        @if (Auth::user()->role?->isAdmin())
+                            <a
+                                href="{{ route('admin.dashboard') }}"
+                                role="menuitem"
+                                class="w-full min-h-[44px] px-4 py-2 text-left text-body-sm font-semibold text-ink hover:bg-surface-container flex items-center transition focus:outline-none focus-visible:bg-surface-container"
+                            >
+                                Dashboard Admin
+                            </a>
+                        @endif
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button
