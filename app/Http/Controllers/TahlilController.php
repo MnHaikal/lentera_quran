@@ -42,8 +42,13 @@ class TahlilController extends Controller
 
         $tahlilItems = $query->paginate(self::PER_PAGE)->withQueryString();
 
+        $favoritedTahlilIds = auth()->check()
+            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'tahlil')->pluck('bookmarkable_id')->all()
+            : [];
+
         return view('tahlil.index', [
             'tahlilItems' => $tahlilItems,
+            'favoritedTahlilIds' => $favoritedTahlilIds,
             'search' => $search,
             'sort' => $sort,
         ]);
@@ -81,6 +86,13 @@ class TahlilController extends Controller
 
         $closingDoaItem = $allItems->firstWhere('urutan', 24);
 
+        $bookmarkedTahlilIds = auth()->check()
+            ? auth()->user()->bookmarks()
+                ->where('bookmarkable_type', 'tahlil_bacaan')
+                ->pluck('bookmarkable_id')
+                ->all()
+            : [];
+
         return view('tahlil.show', [
             'tahlilItem' => $tahlilItem,
             'allItems' => $allItems,
@@ -88,6 +100,7 @@ class TahlilController extends Controller
             'previousItem' => $previousItem,
             'nextItem' => $nextItem,
             'closingDoaItem' => $closingDoaItem,
+            'bookmarkedTahlilIds' => $bookmarkedTahlilIds,
         ]);
     }
 

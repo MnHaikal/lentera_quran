@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Models\Ayah;
 use App\Models\Doa;
+use App\Models\DoaCategory;
 use App\Models\Surah;
+use App\Models\TahlilItem;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -29,7 +31,10 @@ class AppServiceProvider extends ServiceProvider
             'surah' => Surah::class,
             'ayah' => Ayah::class,
             'doa' => Doa::class,
+            'doa_category' => DoaCategory::class,
             'user' => User::class,
+            'tahlil' => TahlilItem::class,
+            'tahlil_bacaan' => TahlilItem::class,
         ]);
 
         Password::defaults(function () {

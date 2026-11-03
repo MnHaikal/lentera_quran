@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DoaController as AdminDoaController;
 use App\Http\Controllers\Admin\SurahController as AdminSurahController;
 use App\Http\Controllers\Admin\TahlilController as AdminTahlilController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DoaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::get('/al-quran', [QuranController::class, 'index'])->name('quran.index');
 Route::get('/al-quran/{surah}', [QuranController::class, 'show'])->whereNumber('surah')->name('quran.show');
+Route::get('/api/audio/track', [QuranController::class, 'audioTrack'])->name('quran.audio-track');
 Route::get('/tahlil', [TahlilController::class, 'index'])->name('tahlil.index');
 Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])->whereNumber('urutan')->name('tahlil.show');
 Route::get('/doa', [DoaController::class, 'index'])->name('doa.index');
@@ -49,6 +51,8 @@ Route::middleware(['auth', 'auth.session', 'role:super_admin,admin'])->group(fun
 });
 
 Route::middleware(['auth', 'auth.session'])->group(function () {
+    Route::get('/penanda', [BookmarkController::class, 'index'])->name('bookmarks.index');
+    Route::post('/bookmarks/toggle', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
