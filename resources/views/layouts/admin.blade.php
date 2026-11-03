@@ -47,8 +47,8 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.tahlil.*') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                     📿 Kelola Tahlil
                 </a>
-                <a href="{{ route('admin.kategori-doa.index') }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.kategori-doa.*') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
+                <a href="{{ route('admin.doa-category.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.doa-category.*') || request()->routeIs('admin.kategori-doa.*') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                     📁 Kategori Doa
                 </a>
                 <a href="{{ route('admin.doa.index') }}"
@@ -60,8 +60,8 @@
                     <div class="pt-4 border-t border-slate-200 mt-4">
                         <span class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Super Admin</span>
                     </div>
-                    <a href="{{ route('admin.pengguna.index') }}"
-                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.pengguna.*') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
+                    <a href="{{ route('admin.users.index') }}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.pengguna.*') ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                         👥 Kelola Pengguna
                     </a>
                 @endif
