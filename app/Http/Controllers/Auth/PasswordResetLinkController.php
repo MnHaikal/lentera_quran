@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
@@ -16,19 +15,11 @@ class PasswordResetLinkController extends Controller
         return view('auth.forgot-password');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ForgotPasswordRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
+        Password::sendResetLink($request->only('email'));
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        // Selalu kembalikan pesan yang sama baik email terdaftar maupun tidak untuk mencegah user enumeration.
+        return back()->with('status', __('passwords.sent'));
     }
 }

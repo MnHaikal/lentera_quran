@@ -11,7 +11,41 @@
     <form
         method="POST"
         action="{{ route('register') }}"
-        x-data="{ showPassword: false, showConfirmPassword: false }"
+        novalidate
+        x-data="{
+            showPassword: false,
+            showConfirmPassword: false,
+            submitting: false,
+            email: @js(old('email', '')),
+            emailError: @js($errors->first('email') ?: ''),
+            emailTouched: false,
+            validateEmail() {
+                const val = (this.email || '').trim();
+                if (!val) {
+                    this.emailError = 'Alamat email wajib diisi.';
+                    return false;
+                }
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(val)) {
+                    this.emailError = 'Format alamat email tidak valid (contoh: nama@email.com).';
+                    return false;
+                }
+                this.emailError = '';
+                return true;
+            },
+            handleSubmit(e) {
+                this.emailTouched = true;
+                const emailOk = this.validateEmail();
+                if (!emailOk) {
+                    e.preventDefault();
+                    this.submitting = false;
+                    this.$refs.emailInput?.focus();
+                    return false;
+                }
+                this.submitting = true;
+            }
+        }"
+        @submit="handleSubmit($event)"
         class="space-y-4"
     >
         @csrf
@@ -32,13 +66,15 @@
                     name="name"
                     value="{{ old('name') }}"
                     placeholder="Nama lengkap Anda"
+                    maxlength="100"
                     required
                     autofocus
                     autocomplete="name"
+                    @if ($errors->has('name')) aria-invalid="true" aria-describedby="name-error" @endif
                     class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
                 >
             </div>
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <x-input-error id="name-error" :messages="$errors->get('name')" class="mt-2" />
         </div>
 
         <div>
@@ -52,17 +88,45 @@
                     </svg>
                 </span>
                 <input
+                    x-ref="emailInput"
                     id="email"
                     type="email"
                     name="email"
-                    value="{{ old('email') }}"
+                    x-model="email"
+                    @blur="emailTouched = true; validateEmail()"
+                    @input="if (emailTouched || emailError) validateEmail()"
                     placeholder="nama@email.com"
+                    maxlength="150"
                     required
-                    autocomplete="username"
-                    class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
+                    autocomplete="email"
+                    :aria-invalid="emailError ? 'true' : 'false'"
+                    aria-describedby="email-error"
+                    :class="emailError ? 'border-red-500 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]' : 'border-line focus:border-brand-teal focus:shadow-teal-ring'"
+                    class="w-full min-h-[48px] rounded-xl bg-surface-card border pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:ring-0 focus:outline-none"
                 >
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            
+            {{-- Peringatan Kesalahan Format Email --}}
+            <div id="email-error" class="mt-2 min-h-[20px]">
+                <template x-if="emailError">
+                    <p class="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                        </svg>
+                        <span x-text="emailError"></span>
+                    </p>
+                </template>
+                @if ($errors->has('email'))
+                    <noscript>
+                        <p class="text-xs text-red-600 dark:text-red-400 font-medium flex items-center gap-1.5">
+                            <svg class="w-4 h-4 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            <span>{{ $errors->first('email') }}</span>
+                        </p>
+                    </noscript>
+                @endif
+            </div>
         </div>
 
         <div>
@@ -80,14 +144,18 @@
                     :type="showPassword ? 'text' : 'password'"
                     name="password"
                     placeholder="Minimal 8 karakter"
+                    minlength="8"
+                    maxlength="64"
                     required
                     autocomplete="new-password"
+                    @if ($errors->has('password')) aria-invalid="true" aria-describedby="password-error" @endif
                     class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-11 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
                 >
                 <button
                     type="button"
                     @click="showPassword = !showPassword"
                     :aria-label="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'"
+                    :aria-pressed="showPassword.toString()"
                     class="absolute inset-y-0 right-0 flex items-center pr-4 text-ink-muted hover:text-ink transition"
                 >
                     <svg x-show="!showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -99,7 +167,7 @@
                     </svg>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-input-error id="password-error" :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div>
@@ -117,14 +185,18 @@
                     :type="showConfirmPassword ? 'text' : 'password'"
                     name="password_confirmation"
                     placeholder="Ulangi kata sandi"
+                    minlength="8"
+                    maxlength="64"
                     required
                     autocomplete="new-password"
+                    @if ($errors->has('password_confirmation')) aria-invalid="true" aria-describedby="password-confirmation-error" @endif
                     class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-11 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
                 >
                 <button
                     type="button"
                     @click="showConfirmPassword = !showConfirmPassword"
                     :aria-label="showConfirmPassword ? 'Sembunyikan konfirmasi kata sandi' : 'Tampilkan konfirmasi kata sandi'"
+                    :aria-pressed="showConfirmPassword.toString()"
                     class="absolute inset-y-0 right-0 flex items-center pr-4 text-ink-muted hover:text-ink transition"
                 >
                     <svg x-show="!showConfirmPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -136,15 +208,16 @@
                     </svg>
                 </button>
             </div>
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <x-input-error id="password-confirmation-error" :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
         <div class="pt-2">
             <button
                 type="submit"
-                class="w-full min-h-[50px] rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy text-body-md font-bold shadow-sm inline-flex items-center justify-center gap-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-2"
+                :disabled="submitting"
+                class="w-full min-h-[50px] rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy text-body-md font-bold shadow-sm inline-flex items-center justify-center gap-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                <span>Daftar Akun Baru</span>
+                <span x-text="submitting ? 'Memproses...' : 'Daftar Akun Baru'">Daftar Akun Baru</span>
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>

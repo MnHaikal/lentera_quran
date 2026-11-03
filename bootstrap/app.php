@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsSuperAdmin;
 use Illuminate\Foundation\Application;
@@ -15,10 +16,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectUsersTo(fn (): string => route('beranda', absolute: false));
+
         $middleware->alias([
+            'role' => EnsureUserHasRole::class,
             'admin' => EnsureUserIsAdmin::class,
             'super_admin' => EnsureUserIsSuperAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        //
     })->create();
