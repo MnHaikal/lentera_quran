@@ -18,10 +18,15 @@ class DoaController extends Controller
 
         $search = trim((string) $request->query('q', ''));
         $sort = (string) $request->query('sort', 'urutan');
+        $kategoriSlug = trim((string) $request->query('kategori', ''));
 
         $query = DoaCategory::query()
             ->with(['doas' => static fn ($q) => $q->published()->orderBy('id')])
             ->withCount(['doas' => static fn ($q) => $q->published()]);
+
+        if ($kategoriSlug !== '') {
+            $query->where('slug', $kategoriSlug);
+        }
 
         if ($search !== '') {
             $query->where(function ($builder) use ($search): void {

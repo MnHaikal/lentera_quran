@@ -13,6 +13,11 @@ class QuranController extends Controller
     public function index(Request $request): View
     {
         $filter = (string) $request->query('filter', 'semua');
+        $tempat = (string) $request->query('tempat', '');
+        if (in_array($tempat, ['mekah', 'madinah'], true)) {
+            $filter = $tempat;
+        }
+
         $juz = $request->integer('juz');
         $search = trim((string) $request->query('q', ''));
         $sort = $request->query('sort') === 'desc' ? 'desc' : 'asc';

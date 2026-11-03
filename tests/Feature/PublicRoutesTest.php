@@ -52,5 +52,27 @@ class PublicRoutesTest extends TestCase
         $response = $this->get('/doa');
         $response->assertStatus(200);
     }
+
+    public function test_quran_index_supports_prd_query_filters(): void
+    {
+        $response = $this->get('/al-quran?q=fatihah&juz=30&tempat=mekah');
+        $response->assertStatus(200);
+
+        $responseMadinah = $this->get('/al-quran?tempat=madinah');
+        $responseMadinah->assertStatus(200);
+    }
+
+    public function test_quran_show_supports_target_ayah_jumping(): void
+    {
+        $response = $this->get('/al-quran/2?ayat=255');
+        $response->assertStatus(200);
+        $response->assertSee('ayat-255');
+    }
+
+    public function test_doa_index_supports_kategori_query(): void
+    {
+        $response = $this->get('/doa?kategori=doa-shalat');
+        $response->assertStatus(200);
+    }
 }
 
