@@ -6,7 +6,7 @@
         return str_replace($western, $eastern, (string) $number);
     };
 
-    $tempatTurunUpper = $surah->tempat_turun === 'mekah' ? 'MAKKIYYAH' : 'MADANIYYAH';
+    $tempatTurunUpper = (($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun) === 'mekah') ? 'MAKKIYYAH' : 'MADANIYYAH';
     $showBasmalah = $surah->id !== 1 && $surah->id !== 9;
 @endphp
 

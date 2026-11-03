@@ -14,7 +14,7 @@ class TahlilSeeder extends Seeder
         $items = [
             [
                 'urutan' => 1,
-                'judul' => 'Pengantar Al-Fatihah (Tawassul)',
+                'judul' => 'Pengantar Al-Fatihah kepada Rasulullah SAW (Tawassul)',
                 'teks_arab' => 'إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَآلِهِ وَصَحْبِهِ أَجْمَعِيْنَ، شَيْءٌ لِلّٰهِ لَهُمُ الْفَاتِحَةُ',
                 'teks_latin' => "Ilaa hadhratin-nabiyyil-musthafaa Muhammadin shallallahu 'alaihi wa sallama wa aalihii wa shahbihii ajma'iin, syai-un lillaahi lahumul-faatihah.",
                 'terjemahan' => 'Kepada yang mulia Nabi pilihan Muhammad SAW beserta keluarga dan seluruh sahabat beliau, sesuatu karena Allah untuk mereka, bacaan Al-Fatihah.',

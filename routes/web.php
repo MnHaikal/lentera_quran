@@ -18,17 +18,32 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TahlilController;
 use Illuminate\Support\Facades\Route;
 
-// Rute Publik
-Route::get('/', [HomeController::class, 'index'])->name('beranda');
-Route::get('/al-quran', [QuranController::class, 'index'])->name('quran.index');
-Route::get('/al-quran/juz-amma', [QuranController::class, 'juzAmma'])->name('quran.juz-amma');
-Route::get('/al-quran/{surah}', [QuranController::class, 'show'])->whereNumber('surah')->name('quran.show');
-Route::get('/tahlil', [TahlilController::class, 'index'])->name('tahlil.index');
-Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])->whereNumber('urutan')->name('tahlil.show');
-Route::get('/doa', [DoaController::class, 'index'])->name('doa.index');
-Route::get('/doa/{slug}', [DoaController::class, 'show'])->name('doa.show');
+Route::get('/', [HomeController::class, 'index'])
+    ->name('beranda');
 
-// Rute Pengguna Terautentikasi (Bookmarks, Riwayat Baca, Pengaturan, Profil)
+Route::get('/al-quran', [QuranController::class, 'index'])
+    ->name('quran.index');
+
+Route::get('/al-quran/juz-amma', [QuranController::class, 'juzAmma'])
+    ->name('quran.juz-amma');
+
+Route::get('/al-quran/{surah}', [QuranController::class, 'show'])
+    ->whereNumber('surah')
+    ->name('quran.show');
+
+Route::get('/tahlil', [TahlilController::class, 'index'])
+    ->name('tahlil.index');
+
+Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])
+    ->whereNumber('urutan')
+    ->name('tahlil.show');
+
+Route::get('/doa', [DoaController::class, 'index'])
+    ->name('doa.index');
+
+Route::get('/doa/{slug}', [DoaController::class, 'show'])
+    ->name('doa.show');
+
 Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::post('/al-quran/{surah}/simpan', [BookmarkController::class, 'surah'])
         ->middleware('throttle:60,1')
@@ -59,23 +74,25 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::put('/pengaturan', [SettingController::class, 'update'])
         ->name('pengaturan.update');
 
-    Route::get('/dashboard', function () {
-        if (request()->user()?->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-        return redirect()->route('beranda');
-    })->name('dashboard');
+    Route::get('/profil', [ProfileController::class, 'edit'])
+        ->name('profil.edit');
 
-    Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
-    Route::match(['put', 'patch'], '/profil', [ProfileController::class, 'update'])->name('profil.update');
-    Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profil.destroy');
+    Route::match(['put', 'patch'], '/profil', [ProfileController::class, 'update'])
+        ->name('profil.update');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::delete('/profil', [ProfileController::class, 'destroy'])
+        ->name('profil.destroy');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
-// Rute Panel Admin & Super Admin (Sesuai Desain & Controller Rama)
 Route::middleware(['auth', 'auth.session', 'role:super_admin,admin'])->group(function () {
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/super-admin', [AdminDashboardController::class, 'index'])->name('super-admin.dashboard');
@@ -108,11 +125,13 @@ Route::middleware(['auth', 'auth.session', 'role:super_admin,admin'])->group(fun
     Route::get('/admin/doa-category', fn () => redirect()->route('admin.doa-category.index'))->name('admin.kategori-doa.index');
 
     // Pengguna (Super Admin)
-    Route::get('/admin/pengguna', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::post('/admin/pengguna', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::put('/admin/pengguna/{user:id}', [AdminUserController::class, 'update'])->name('admin.users.update');
-    Route::delete('/admin/pengguna/{user:id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
-    Route::get('/admin/users', fn () => redirect()->route('admin.users.index'))->name('admin.pengguna.index');
+    Route::middleware('role:super_admin')->group(function () {
+        Route::get('/admin/pengguna', [AdminUserController::class, 'index'])->name('admin.users.index');
+        Route::post('/admin/pengguna', [AdminUserController::class, 'store'])->name('admin.users.store');
+        Route::put('/admin/pengguna/{user:id}', [AdminUserController::class, 'update'])->name('admin.users.update');
+        Route::delete('/admin/pengguna/{user:id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::get('/admin/users', fn () => redirect()->route('admin.users.index'))->name('admin.pengguna.index');
+    });
 });
 
 require __DIR__.'/auth.php';

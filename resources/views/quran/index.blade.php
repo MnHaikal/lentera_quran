@@ -195,7 +195,7 @@
             @forelse ($surahs as $surah)
                 @php
                     $isReading = $surah->id === 18 && $activeFilter === 'semua' && !$searchQuery;
-                    $isMadaniyah = $surah->tempat_turun === 'madinah';
+                    $isMadaniyah = ($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun) === 'madinah';
                     $minJuz = (int) ($surah->ayahs_min_juz ?: 1);
                     $maxJuz = (int) ($surah->ayahs_max_juz ?: $minJuz);
                     $juzText = $minJuz === $maxJuz ? "Juz {$minJuz}" : "Juz {$minJuz}–{$maxJuz}";

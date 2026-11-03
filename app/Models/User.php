@@ -14,7 +14,6 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -34,21 +33,11 @@ class User extends Authenticatable
         'role' => 'user',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -68,24 +57,19 @@ class User extends Authenticatable
         return $this->role?->isSuperAdmin() ?? false;
     }
 
-    public function bookmarks(): HasMany
+    public function settings(): HasOne
     {
-        return $this->hasMany(Bookmark::class);
+        return $this->hasOne(UserSetting::class);
     }
 
     public function userSetting(): HasOne
     {
-        return $this->hasOne(UserSetting::class);
+        return $this->settings();
     }
 
-    public function setting(): HasOne
+    public function bookmarks(): HasMany
     {
-        return $this->hasOne(UserSetting::class);
-    }
-
-    public function settings(): HasOne
-    {
-        return $this->hasOne(UserSetting::class);
+        return $this->hasMany(Bookmark::class);
     }
 
     public function lastRead(): HasOne

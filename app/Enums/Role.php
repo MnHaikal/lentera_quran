@@ -6,31 +6,31 @@ namespace App\Enums;
 
 enum Role: string
 {
-    case SuperAdmin = 'super_admin';
-    case Admin = 'admin';
-    case User = 'user';
+    case SUPER_ADMIN = 'super_admin';
+    case ADMIN = 'admin';
+    case USER = 'user';
 
-    public const SUPER_ADMIN = self::SuperAdmin;
-    public const ADMIN = self::Admin;
-    public const USER = self::User;
+    public const SuperAdmin = self::SUPER_ADMIN;
+    public const Admin = self::ADMIN;
+    public const User = self::USER;
 
     public function label(): string
     {
         return match ($this) {
-            self::SuperAdmin => 'Super Admin',
-            self::Admin => 'Admin',
-            self::User => 'User',
+            self::SUPER_ADMIN => 'Super Admin',
+            self::ADMIN => 'Admin',
+            self::USER => 'User',
         };
     }
 
     public function isAdmin(): bool
     {
-        return $this === self::SuperAdmin || $this === self::Admin;
+        return $this === self::ADMIN || $this === self::SUPER_ADMIN;
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this === self::SuperAdmin;
+        return $this === self::SUPER_ADMIN;
     }
 
     public static function values(): array
@@ -38,3 +38,4 @@ enum Role: string
         return array_column(self::cases(), 'value');
     }
 }
+

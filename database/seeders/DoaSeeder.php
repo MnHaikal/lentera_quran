@@ -64,10 +64,24 @@ class DoaSeeder extends Seeder
                 ],
             ],
             [
-                'nama' => 'Doa Sesudah Sholat',
-                'slug' => 'doa-sesudah-sholat',
+                'nama' => 'Doa Shalat & Sesudah Shalat',
+                'slug' => 'doa-shalat',
                 'urutan' => 2,
                 'doas' => [
+                    [
+                        'judul' => 'Doa Shalat Tahajud',
+                        'teks_arab' => 'اَللّٰهُمَّ لَكَ الْحَمْدُ أَنْتَ نُوْرُ السَّمٰوَاتِ وَالْأَرْضِ وَمَنْ فِيْهِنَّ',
+                        'teks_latin' => 'Allaahumma lakal-hamdu anta nuurus-samaawaati wal-ardhi wa man fiihinna.',
+                        'terjemahan' => 'Ya Allah, bagi-Mu segala puji, Engkaulah cahaya langit dan bumi serta apa yang ada di dalamnya.',
+                        'sumber' => 'HR. Bukhari no. 1120 dan Muslim no. 769',
+                    ],
+                    [
+                        'judul' => 'Doa Shalat Tarawih (Doa Kamilin)',
+                        'teks_arab' => 'اَللّٰهُمَّ اجْعَلْنَا بِالْإِيْمَانِ كَامِلِيْنَ، وَلِلْفَرَائِضِ مُؤَدِّيْنَ',
+                        'teks_latin' => 'Allaahummaj\'alnaa bil-iimaani kaamiliin, wa lil-faraa-idhi mu-addiin.',
+                        'terjemahan' => 'Ya Allah, jadikanlah kami orang-orang yang sempurna imannya, dan menunaikan kewajiban-kewajiban.',
+                        'sumber' => 'Doa Kamilin Masyaikh',
+                    ],
                     [
                         'judul' => 'Doa Memohon Kebaikan Dunia dan Akhirat (Sapu Jagat)',
                         'teks_arab' => 'رَبَّنَآ اٰتِنَا فِى الدُّنْيَا حَسَنَةً وَّفِى الْاٰخِرَةِ حَسَنَةً وَّقِنَا عَذَابَ النَّارِ',

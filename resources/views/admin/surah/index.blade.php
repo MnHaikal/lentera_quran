@@ -230,7 +230,7 @@
 
                             {{-- Tempat Turun --}}
                             <td class="px-4 py-4 text-center">
-                                @if(strtolower($surah->tempat_turun) === 'mekah')
+                                @if(($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : (string) $surah->tempat_turun) === 'mekah')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFF6E5] text-[#A66C0C] border border-[#FDE1AC]">
                                         Mekah
                                     </span>
@@ -286,7 +286,7 @@
                                             'nama_arab' => $surah->nama_arab,
                                             'arti' => $surah->arti,
                                             'jumlah_ayat' => $surah->jumlah_ayat,
-                                            'tempat_turun' => $surah->tempat_turun,
+                                            'tempat_turun' => $surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun,
                                             'audio_url' => $surah->audio_url ?? '',
                                             'deskripsi' => $surah->deskripsi ?? '',
                                         ]) }})"

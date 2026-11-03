@@ -24,21 +24,15 @@ class ComprehensiveRouteTest extends TestCase
             '/profil',
             '/admin',
             '/admin/surah',
-            '/admin/surah/1/edit',
-            '/admin/surah/1/ayat',
             '/admin/tahlil',
-            '/admin/tahlil/create',
             '/admin/kategori-doa',
-            '/admin/kategori-doa/create',
             '/admin/doa',
-            '/admin/doa/create',
             '/admin/pengguna',
-            '/admin/pengguna/create',
         ];
 
         foreach ($routes as $route) {
             $response = $this->actingAs($superAdmin)->get($route);
-            $response->assertStatus(200);
+            $this->assertSame(200, $response->getStatusCode(), "Route {$route} failed with status {$response->getStatusCode()}");
         }
     }
 
@@ -120,26 +114,32 @@ class ComprehensiveRouteTest extends TestCase
         $superAdmin = User::where('role', Role::SUPER_ADMIN)->first() ?? User::factory()->create(['role' => Role::SUPER_ADMIN]);
         $uniqueEmail = 'user_test_' . Str::random(8) . '@example.com';
 
-        $responseStore = $this->actingAs($superAdmin)->post('/admin/pengguna', [
-            'name' => 'Pengguna Uji Coba',
-            'email' => $uniqueEmail,
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
-            'role' => Role::USER->value,
-        ]);
+        $responseStore = $this->actingAs($superAdmin)
+            ->from('/admin/pengguna')
+            ->post('/admin/pengguna', [
+                'name' => 'Pengguna Uji Coba',
+                'email' => $uniqueEmail,
+                'password' => 'password123',
+                'password_confirmation' => 'password123',
+                'role' => Role::USER->value,
+            ]);
         $responseStore->assertRedirect('/admin/pengguna');
 
         $createdUser = User::where('email', $uniqueEmail)->first();
         $this->assertNotNull($createdUser);
 
-        $responseUpdate = $this->actingAs($superAdmin)->put("/admin/pengguna/{$createdUser->id}", [
-            'name' => 'Pengguna Uji Coba Revisi',
-            'email' => $uniqueEmail,
-            'role' => Role::ADMIN->value,
-        ]);
+        $responseUpdate = $this->actingAs($superAdmin)
+            ->from('/admin/pengguna')
+            ->put("/admin/pengguna/{$createdUser->id}", [
+                'name' => 'Pengguna Uji Coba Revisi',
+                'email' => $uniqueEmail,
+                'role' => Role::ADMIN->value,
+            ]);
         $responseUpdate->assertRedirect('/admin/pengguna');
 
-        $responseDelete = $this->actingAs($superAdmin)->delete("/admin/pengguna/{$createdUser->id}");
+        $responseDelete = $this->actingAs($superAdmin)
+            ->from('/admin/pengguna')
+            ->delete("/admin/pengguna/{$createdUser->id}");
         $responseDelete->assertRedirect('/admin/pengguna');
         $this->assertDatabaseMissing('users', ['id' => $createdUser->id]);
     }

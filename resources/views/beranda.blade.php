@@ -313,7 +313,7 @@
                         $minJuz = (int) ($surah->ayahs_min_juz ?: 1);
                         $maxJuz = (int) ($surah->ayahs_max_juz ?: $minJuz);
                         $juzBadge = $minJuz === $maxJuz ? "Juz {$minJuz}" : "Juz {$minJuz}-{$maxJuz}";
-                        $turunLabel = $surah->tempat_turun === 'mekah' ? 'Makkiyah' : 'Madaniyah';
+                        $turunLabel = ($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun) === 'mekah' ? 'Makkiyah' : 'Madaniyah';
                     @endphp
                     <a
                         href="{{ route('quran.show', $surah->id) }}"

@@ -186,15 +186,20 @@
                             @endif
                             <a
                                 href="{{ route('tersimpan') }}"
-                                wire:navigate
                                 role="menuitem"
                                 class="w-full min-h-[40px] px-4 py-2 text-left text-body-sm font-medium text-ink hover:bg-surface-container transition flex items-center gap-2"
                             >
                                 <span>Tersimpan</span>
                             </a>
                             <a
+                                href="{{ route('profile.edit') }}"
+                                role="menuitem"
+                                class="w-full min-h-[40px] px-4 py-2 text-left text-body-sm font-medium text-ink hover:bg-surface-container transition flex items-center gap-2"
+                            >
+                                <span>Profil Saya</span>
+                            </a>
+                            <a
                                 href="{{ route('pengaturan.edit') }}"
-                                wire:navigate
                                 role="menuitem"
                                 class="w-full min-h-[40px] px-4 py-2 text-left text-body-sm font-medium text-ink hover:bg-surface-container transition flex items-center gap-2"
                             >
