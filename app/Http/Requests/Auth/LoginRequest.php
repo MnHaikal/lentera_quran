@@ -34,11 +34,10 @@ class LoginRequest extends FormRequest
                 'required',
                 'string',
                 'lowercase',
-                'email:rfc',
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/',
+                'email',
                 'max:150',
             ],
-            'password' => ['required', 'string', 'max:64'],
+            'password' => ['required', 'string'],
         ];
     }
 
@@ -50,7 +49,6 @@ class LoginRequest extends FormRequest
         return [
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
-            'email.regex' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'password.required' => 'Kata sandi wajib diisi.',
         ];
     }

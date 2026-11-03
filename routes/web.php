@@ -93,7 +93,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         ->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'auth.session', 'role:super_admin,admin'])->group(function () {
+Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/super-admin', [AdminDashboardController::class, 'index'])->name('super-admin.dashboard');
 

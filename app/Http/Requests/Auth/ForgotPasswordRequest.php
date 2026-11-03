@@ -29,8 +29,7 @@ class ForgotPasswordRequest extends FormRequest
                 'required',
                 'string',
                 'lowercase',
-                'email:rfc',
-                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/',
+                'email',
                 'max:150',
             ],
         ];
