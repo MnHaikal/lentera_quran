@@ -31,5 +31,19 @@ class ResetPasswordRequest extends FormRequest
             'password' => ['required', 'string', 'confirmed', Password::defaults()],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'token.required' => 'Token reset kata sandi tidak valid atau telah kedaluwarsa.',
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+        ];
+    }
 }
 

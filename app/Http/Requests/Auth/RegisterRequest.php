@@ -57,7 +57,6 @@ class RegisterRequest extends FormRequest
             'name.max' => 'Nama lengkap tidak boleh lebih dari 100 karakter.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
-            'email.regex' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'email.unique' => 'Alamat email ini sudah terdaftar. Silakan gunakan email lain atau masuk ke akun Anda.',
             'email.max' => 'Alamat email tidak boleh lebih dari 150 karakter.',
             'password.required' => 'Kata sandi wajib diisi.',

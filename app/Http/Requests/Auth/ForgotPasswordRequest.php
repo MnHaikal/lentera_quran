@@ -43,7 +43,6 @@ class ForgotPasswordRequest extends FormRequest
         return [
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
-            'email.regex' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'email.max' => 'Alamat email tidak boleh lebih dari 150 karakter.',
         ];
     }
