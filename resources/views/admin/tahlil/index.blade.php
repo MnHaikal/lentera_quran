@@ -8,7 +8,7 @@
             Bacaan Tahlil
         </h1>
         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#E1F1F1] dark:bg-[#16363B] text-[#1B6B73] dark:text-[#7CE3B3] text-[11px] font-bold shrink-0">
-            {{ $totalTahlil }} Bacaan
+            {{ $totalTahlil ?? ($items->total() ?? 0) }} Bacaan
         </span>
     </div>
 @endsection

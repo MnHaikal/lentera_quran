@@ -96,10 +96,11 @@
         <div class="flex items-center gap-2">
             @auth
                 <a
-                    href="{{ route('tersimpan') }}"
+                    href="{{ route('bookmarks.index') }}"
                     wire:navigate
                     aria-label="Penanda bacaan tersimpan"
-                    class="hidden sm:inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-ink-muted hover:text-ink hover:bg-surface-container/60 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                    title="Penanda bacaan tersimpan"
+                    class="hidden sm:inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full text-ink-muted hover:text-brand-gold hover:bg-surface-container/60 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
                 >
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />

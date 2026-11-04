@@ -17,8 +17,10 @@ class AdminTahlilController extends Controller
     public function index(Request $request): View
     {
         $items = TahlilItem::orderBy('urutan')->paginate(15);
+        $tahlilItems = $items;
+        $totalTahlil = TahlilItem::count();
 
-        return view('admin.tahlil.index', compact('items'));
+        return view('admin.tahlil.index', compact('items', 'tahlilItems', 'totalTahlil'));
     }
 
     public function create(): View

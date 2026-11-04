@@ -165,7 +165,7 @@
             <div class="flex items-center gap-2 self-start lg:self-center shrink-0 flex-wrap">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F5EFE6] dark:bg-[#1C2C3E] text-[#78664D] dark:text-[#E2B14C] text-xs font-semibold border border-[#E8DFC8] dark:border-white/10">
                     <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                    <span>Total {{ $totalDoa }} Doa</span>
+                    <span>Total {{ $totalDoa ?? ($doas->total() ?? 0) }} Doa</span>
                 </span>
 
                 <a

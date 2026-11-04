@@ -2,7 +2,46 @@
     title="Kumpulan Doa"
     description="Kumpulan doa harian, doa shalat, doa perjalanan, doa menuntut ilmu, doa keluarga, dan dzikir mustajab bersumber dari Al-Qur'an dan As-Sunnah Ash-Shahihah."
 >
-    <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-10 md:py-12 space-y-8">
+    <div
+        x-data="{
+            favoritedCategories: @js($favoritedCategoryIds),
+            async toggleFavoriteCategory(categoryId) {
+                @guest
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                @endguest
+
+                try {
+                    const response = await fetch('{{ route('bookmarks.toggle') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').getAttribute('content'),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ type: 'doa_category', id: categoryId })
+                    });
+
+                    if (response.status === 401) {
+                        window.location.href = '{{ route('login') }}';
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (data.bookmarked) {
+                        if (!this.favoritedCategories.includes(categoryId)) {
+                            this.favoritedCategories.push(categoryId);
+                        }
+                    } else {
+                        this.favoritedCategories = this.favoritedCategories.filter(id => id !== categoryId);
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }"
+        class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-10 md:py-12 space-y-8"
+    >
         {{-- Header & Search Bar --}}
         <header class="text-center max-w-3xl mx-auto space-y-4">
             <h1 class="text-display-mobile md:text-[42px] md:leading-[50px] font-bold text-brand-navy dark:text-ink tracking-tight">
@@ -44,12 +83,9 @@
                         @endif
                         <button
                             type="submit"
-                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-teal hover:bg-brand-navy text-white text-body-sm font-semibold transition shrink-0"
+                            class="px-6 py-2.5 rounded-full bg-brand-teal hover:bg-brand-navy text-white text-body-sm font-semibold transition shrink-0"
                         >
-                            <span>Telusuri</span>
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
+                            Cari
                         </button>
                     </div>
                 </form>
@@ -101,43 +137,64 @@
         <section aria-label="Daftar Kategori Doa" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             @forelse ($categories as $category)
                 @php
-                    $isFirstCard = $loop->first;
                     $sampleDoa = $category->doas->first();
                     $doaTitlesPreview = $category->doas->pluck('judul')->take(3)->implode(', ');
                 @endphp
 
                 <article
-                    class="rounded-card p-5 flex flex-col justify-between transition duration-150 group {{ $isFirstCard ? 'bg-surface-card border-[2px] border-brand-gold shadow-ayah-active' : 'bg-surface-card border border-line shadow-card hover:border-brand-gold/70' }}"
+                    class="rounded-card p-5 flex flex-col justify-between transition duration-150 group bg-surface-card border border-line shadow-card hover:border-brand-gold/70"
                 >
+                    {{-- Baris Pill Atas & Ikon Bintang Favorit --}}
+                    <div class="flex items-center justify-between gap-2 mb-3.5">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-full bg-brand-teal/15 text-brand-teal text-label-sm font-semibold">
+                                {{ $category->doas_count }} Doa Pilihan
+                            </span>
+                            <span class="px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-surface-low text-ink-muted">
+                                Shahih
+                            </span>
+                        </div>
+
+                        @guest
+                            <a
+                                href="{{ route('login') }}"
+                                wire:navigate
+                                title="Masuk untuk menambahkan ke kategori favorit"
+                                aria-label="Masuk untuk menambahkan {{ $category->nama }} ke kategori favorit"
+                                class="inline-flex items-center justify-center w-7 h-7 rounded-full text-ink-muted hover:text-brand-gold transition shrink-0"
+                            >
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                </svg>
+                            </a>
+                        @else
+                            <button
+                                type="button"
+                                @click="toggleFavoriteCategory({{ $category->id }})"
+                                :title="favoritedCategories.includes({{ $category->id }}) ? 'Hapus dari favorit' : 'Tambah ke kategori favorit'"
+                                :aria-label="favoritedCategories.includes({{ $category->id }}) ? 'Hapus {{ $category->nama }} dari favorit' : 'Tambah {{ $category->nama }} ke kategori favorit'"
+                                class="inline-flex items-center justify-center w-7 h-7 rounded-full transition shrink-0"
+                                :class="favoritedCategories.includes({{ $category->id }}) ? 'text-brand-gold' : 'text-ink-muted hover:text-brand-gold'"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    :class="favoritedCategories.includes({{ $category->id }}) ? 'fill-current text-brand-gold' : 'fill-none'"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    aria-hidden="true"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                </svg>
+                            </button>
+                        @endguest
+                    </div>
+
                     <a
                         href="{{ route('doa.show', $category->slug) }}"
                         wire:navigate
                         class="block flex-1 focus:outline-none"
                     >
-                        {{-- Baris Pill Atas & Ikon Bookmark --}}
-                        <div class="flex items-center justify-between gap-2 mb-3.5">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="px-2.5 py-0.5 rounded-full bg-brand-teal/15 text-brand-teal text-label-sm font-semibold">
-                                    {{ $category->doas_count }} Doa Pilihan
-                                </span>
-                                <span class="px-2.5 py-0.5 rounded-full text-label-sm font-semibold {{ $isFirstCard ? 'bg-brand-gold-pale text-brand-navy' : 'bg-surface-low text-ink-muted' }}">
-                                    Shahih
-                                </span>
-                            </div>
-
-                            <span class="transition shrink-0 {{ $isFirstCard ? 'text-brand-gold' : 'text-ink-muted/60 group-hover:text-brand-gold' }}" aria-hidden="true">
-                                @if ($isFirstCard)
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
-                                    </svg>
-                                @else
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                                    </svg>
-                                @endif
-                            </span>
-                        </div>
-
                         {{-- Judul Kategori & Subjudul Sumber --}}
                         <h3 class="text-title-md font-bold text-brand-navy dark:text-ink leading-snug line-clamp-2 min-h-[48px] group-hover:text-brand-teal transition">
                             {{ $category->nama }}
@@ -171,7 +228,7 @@
                         <a
                             href="{{ route('doa.show', $category->slug) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-sm font-semibold transition shrink-0 {{ $isFirstCard ? 'bg-brand-navy text-white hover:bg-brand-teal' : 'bg-surface-low hover:bg-brand-gold-pale text-brand-navy dark:text-ink dark:hover:text-brand-navy' }}"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-sm font-semibold transition shrink-0 bg-surface-low hover:bg-brand-gold-pale text-brand-navy dark:text-ink dark:hover:text-brand-navy"
                         >
                             <span>Buka Doa</span>
                             <span aria-hidden="true">&rarr;</span>

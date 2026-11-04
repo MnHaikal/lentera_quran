@@ -52,9 +52,14 @@ class DoaController extends Controller
         $categories = $query->paginate(self::PER_PAGE)->withQueryString();
         $totalDoaCount = Doa::query()->published()->count();
 
+        $favoritedCategoryIds = auth()->check()
+            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'doa_category')->pluck('bookmarkable_id')->all()
+            : [];
+
         return view('doa.index', [
             'categories' => $categories,
             'totalDoaCount' => $totalDoaCount,
+            'favoritedCategoryIds' => $favoritedCategoryIds,
             'search' => $search,
             'sort' => $sort,
         ]);
@@ -97,7 +102,7 @@ class DoaController extends Controller
             ->first();
 
         $bookmarkedDoaIds = auth()->check()
-            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'doa')->pluck('bookmarkable_id')->all()
+            ? auth()->user()->bookmarks()->where('bookmarkable_type', 'doa')->whereIn('bookmarkable_id', $doas->pluck('id'))->pluck('bookmarkable_id')->all()
             : [];
 
         return view('doa.show', [
@@ -106,8 +111,8 @@ class DoaController extends Controller
             'allCategories' => $allCategories,
             'previousCategory' => $previousCategory,
             'nextCategory' => $nextCategory,
-            'targetDoaSlug' => $targetDoaSlug !== '' ? $targetDoaSlug : null,
             'bookmarkedDoaIds' => $bookmarkedDoaIds,
+            'targetDoaSlug' => $targetDoaSlug !== '' ? $targetDoaSlug : null,
         ]);
     }
 

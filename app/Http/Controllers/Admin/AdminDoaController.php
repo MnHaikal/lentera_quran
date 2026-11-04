@@ -36,8 +36,9 @@ class AdminDoaController extends Controller
 
         $doas = $query->paginate(15)->withQueryString();
         $categories = DoaCategory::orderBy('urutan')->get();
+        $totalDoa = Doa::count();
 
-        return view('admin.doa.index', compact('doas', 'categories', 'q', 'categoryId'));
+        return view('admin.doa.index', compact('doas', 'categories', 'q', 'categoryId', 'totalDoa'));
     }
 
     public function create(): View

@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class TahlilItem extends Model
 {
@@ -35,6 +36,11 @@ class TahlilItem extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true)->orderBy('urutan', 'asc');
+    }
+
+    public function bookmarks(): MorphMany
+    {
+        return $this->morphMany(Bookmark::class, 'bookmarkable');
     }
 }
 

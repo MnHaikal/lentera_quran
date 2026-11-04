@@ -1,15 +1,3 @@
-@php
-    $shortcuts = [
-        ['label' => 'Ayat Kursi', 'url' => route('quran.show', ['surah' => 2, 'ayat' => 255])],
-        ['label' => 'Surah Yasin', 'url' => route('quran.show', 36)],
-        ['label' => 'Al-Mulk', 'url' => route('quran.show', 67)],
-        ['label' => 'Al-Kahf', 'url' => route('quran.show', 18)],
-        ['label' => 'Ar-Rahman', 'url' => route('quran.show', 55)],
-        ['label' => "Al-Waqi'ah", 'url' => route('quran.show', 56)],
-        ['label' => 'Al-Ikhlas', 'url' => route('quran.show', 112)],
-    ];
-@endphp
-
 <x-app-layout title="Beranda" description="Beranda Lentera Quran — Al-Qur'an digital berbahasa Indonesia, bacaan tahlil, dan doa harian.">
     {{-- Hero Section (Full-Width Background Biru seperti Footer) --}}
     <div class="bg-footer-bg text-footer-text border-b border-white/10 overflow-hidden">
@@ -17,13 +5,6 @@
             <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 {{-- Left Column: Hero Copy & CTA --}}
                 <div class="lg:col-span-7 space-y-6">
-                    <div class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-4 py-1.5 text-label-md text-brand-gold-pale">
-                        <svg class="w-4 h-4 text-brand-gold" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <span>Mushaf Standar Indonesia Kemenag RI</span>
-                    </div>
-
                     <h1 class="text-display-mobile md:text-display-lg text-footer-text tracking-tight">
                         Terangi Hari dengan Cahaya Al-Qur'an
                     </h1>
@@ -38,17 +19,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                             <span>Mulai Membaca</span>
-                        </a>
-
-                        <a
-                            href="{{ route('quran.show', 1) }}"
-                            wire:navigate
-                            class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full border-[1.5px] border-white/30 bg-white/10 text-footer-text text-body-md font-semibold hover:border-brand-gold hover:bg-white/15 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-                        >
-                            <svg class="w-4 h-4 text-brand-gold" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                            </svg>
-                            <span>Dengarkan Murottal</span>
                         </a>
                     </div>
 
@@ -87,207 +57,165 @@
     </div>
 
     <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-8 md:py-12 space-y-10">
-
-        {{-- Search & Filter Pill Bar --}}
-        <section aria-label="Pencarian Cepat">
-            <form action="{{ route('quran.index') }}" method="GET" class="rounded-full bg-surface-card border border-line shadow-card p-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-                <div class="flex items-center gap-3 px-4 py-1.5 flex-1">
-                    <svg class="w-5 h-5 text-ink-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                    </svg>
-                    <input
-                        type="search"
-                        name="q"
-                        aria-label="Cari surah, nomor ayat, atau kata kunci terjemahan"
-                        placeholder="Cari surah, nomor ayat, atau kata kunci terjemahan..."
-                        class="w-full bg-transparent border-0 p-0 text-body-md text-ink placeholder-ink-muted focus:ring-0 focus:outline-none"
-                    >
-                </div>
-
-                <div class="flex items-center justify-between sm:justify-end gap-1.5 px-2 sm:px-0">
-                    <div class="inline-flex items-center rounded-full bg-surface-low p-1 border border-line/60">
-                        <a href="{{ route('quran.index') }}" wire:navigate class="px-4 py-1.5 rounded-full bg-brand-navy text-white text-label-md">Surah</a>
-                        <a href="{{ route('quran.index', ['filter' => 'juz-amma']) }}" wire:navigate class="px-3.5 py-1.5 rounded-full text-ink-muted hover:text-ink text-label-md">Juz</a>
-                        <a href="{{ route('quran.index', ['filter' => 'mekah']) }}" wire:navigate class="px-3.5 py-1.5 rounded-full text-ink-muted hover:text-ink text-label-md hidden md:inline-block">Tempat Turun</a>
-                    </div>
-
-                    <button
-                        type="submit"
-                        aria-label="Cari Al-Qur'an"
-                        class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-brand-teal text-white hover:opacity-90 transition shrink-0"
-                    >
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </section>
-
-        {{-- Lanjutkan Bacaan Terakhir & Ayat Harian --}}
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5 lq-card flex flex-col justify-between space-y-5">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-label-sm font-semibold">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Riwayat Membaca
-                        </span>
-                        <span class="text-label-sm text-ink-muted">
-                            {{ $lastRead ? $lastRead->updated_at->diffForHumans() : 'Belum ada riwayat' }}
-                        </span>
-                    </div>
-
-                    <h2 class="text-headline-sm text-ink">Lanjutkan Bacaan Terakhir</h2>
-
-                    @if ($lastRead && $lastRead->surah)
+        @auth
+            {{-- Bagian User Login: Lanjutkan Bacaan Terakhir (Penanda Ayat Terakhir) & Ayat Harian --}}
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-5 lq-card flex flex-col justify-between space-y-5">
+                    @if ($latestAyahBookmark && $latestAyahBookmark->bookmarkable && $latestAyahBookmark->bookmarkable->surah)
                         @php
-                            $lrSurah = $lastRead->surah;
-                            $lrAyahNum = $lastRead->ayah?->nomor_ayat ?? 1;
-                            $lrProgress = min(100, round(($lrAyahNum / max(1, $lrSurah->jumlah_ayat)) * 100));
+                            $lastAyah = $latestAyahBookmark->bookmarkable;
+                            $lastSurah = $lastAyah->surah;
+                            $lastProgress = min(100, max(1, round(($lastAyah->nomor_ayat / max(1, $lastSurah->jumlah_ayat)) * 100)));
                         @endphp
-                        <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
+                        <div class="space-y-4">
                             <div class="flex items-center justify-between gap-2">
-                                <p class="text-body-md font-bold text-ink">QS. {{ $lrSurah->nama_latin }}: Ayat {{ $lrAyahNum }}</p>
-                                <span class="text-label-md text-brand-gold font-bold">Juz {{ $lastRead->ayah?->juz ?? 1 }}</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-label-sm font-semibold">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                    </svg>
+                                    Penanda Terakhir
+                                </span>
+                                <span class="text-label-sm text-ink-muted">
+                                    {{ $latestAyahBookmark->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                            <p class="text-body-sm text-ink-muted">{{ $lrSurah->arti }} · Surah ke-{{ $lrSurah->id }}</p>
 
-                            <div class="space-y-1.5 pt-1">
-                                <div class="flex items-center justify-between text-label-sm text-ink-muted">
-                                    <span>Progress Surah</span>
-                                    <span class="font-semibold text-ink">{{ $lrProgress }}%</span>
+                            <h2 class="text-headline-sm text-ink font-bold">Lanjutkan Bacaan Terakhir</h2>
+
+                            <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-body-md font-bold text-ink">QS. {{ $lastSurah->nama_latin }}: Ayat {{ $lastAyah->nomor_ayat }}</p>
+                                    <span class="text-label-md text-brand-gold font-bold">Juz {{ $lastAyah->juz }}</span>
                                 </div>
-                                <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
-                                    <div class="h-full rounded-full bg-brand-teal" style="width: {{ $lrProgress }}%;"></div>
+                                <p class="text-body-sm text-ink-muted">{{ $lastSurah->arti }} &middot; Surah ke-{{ $lastSurah->id }}</p>
+
+                                <div class="space-y-1.5 pt-1">
+                                    <div class="flex items-center justify-between text-label-sm text-ink-muted">
+                                        <span>Progress Surah</span>
+                                        <span class="font-semibold text-ink">{{ $lastProgress }}%</span>
+                                    </div>
+                                    <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
+                                        <div class="h-full rounded-full bg-brand-teal transition-all duration-300" style="width: {{ $lastProgress }}%"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    @else
-                        <div class="rounded-xl bg-surface-low border border-line p-4 space-y-3">
-                            <div class="flex items-center justify-between gap-2">
-                                <p class="text-body-md font-bold text-ink">QS. Al-Baqarah: Ayat 255</p>
-                                <span class="text-label-md text-brand-gold font-bold">Juz {{ $dailyAyah?->juz ?? 3 }}</span>
-                            </div>
-                            <p class="text-body-sm text-ink-muted">Ayat Kursi · Surah ke-2</p>
 
-                            <div class="space-y-1.5 pt-1">
-                                <div class="flex items-center justify-between text-label-sm text-ink-muted">
-                                    <span>Pilihan Harian</span>
-                                    <span class="font-semibold text-ink">Mulai Sekarang</span>
-                                </div>
-                                <div class="h-2 w-full rounded-full bg-surface-container overflow-hidden">
-                                    <div class="h-full w-[100%] rounded-full bg-brand-teal"></div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="flex items-center justify-between pt-1">
-                    @if ($lastRead && $lastRead->surah)
-                        <span class="text-body-sm text-ink-muted">Ayat {{ $lrAyahNum }} dari {{ $lrSurah->jumlah_ayat }}</span>
-                        <a
-                            href="{{ route('quran.show', ['surah' => $lastRead->surah_id, 'ayat' => $lrAyahNum]) }}"
-                            wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
-                        >
-                            <span>Lanjutkan</span>
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
-                    @else
-                        <span class="text-body-sm text-ink-muted">Ayat 255 dari 286</span>
-                        <a
-                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                            wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
-                        >
-                            <span>Mulai Baca</span>
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
-                    @endif
-                </div>
-            </div>
-
-            <div class="lg:col-span-7 lq-card flex flex-col justify-between space-y-4">
-                <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold-pale text-brand-navy text-label-sm font-semibold">
-                        <span class="text-brand-gold">&#10022;</span> Ayat Harian
-                    </span>
-                    <a
-                        href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                        wire:navigate
-                        class="text-label-sm text-ink-muted hover:text-brand-teal font-medium transition"
-                    >
-                        QS. {{ $dailyAyah?->surah?->nama_latin ?? 'Al-Baqarah' }} · {{ $dailyAyah?->nomor_ayat ?? 255 }}
-                    </a>
-                </div>
-
-                <p class="quran-arabic text-ink text-right py-1" dir="rtl" lang="ar">
-                    {{ $dailyAyah ? \Illuminate\Support\Str::words($dailyAyah->teks_arab, 10, ' ...') : 'اللّٰهُ لَآ اِلٰهَ اِلَّا هُوَ الْحَيُّ الْقَيُّوْمُ' }}
-                </p>
-
-                <div class="space-y-1.5">
-                    <p class="text-body-sm text-brand-teal italic">
-                        {{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->teks_latin, 95) : 'Allāhu lā ilāha illā huwal-ḥayyul-qayyūm(u)...' }}
-                    </p>
-                    <p class="text-body-sm text-ink-muted leading-relaxed">
-                        "{{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->terjemahan, 165) : 'Allah, tidak ada tuhan selain Dia, Yang Maha Hidup lagi terus-menerus mengurus (makhluk-Nya)...' }}"
-                    </p>
-                </div>
-
-                <div class="flex items-center justify-between pt-2 border-t border-line/60">
-                    <div class="flex items-center gap-2">
-                        @if ($dailyAyah?->audio_url)
-                            <button
-                                type="button"
-                                x-data
-                                @click="$store.audioPlayer.playTrack({ surahId: 2, surahName: 'Al-Baqarah', ayahNumber: 255, src: '{{ $dailyAyah->audio_url }}' })"
-                                class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-semibold text-ink hover:border-brand-teal transition"
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-body-sm text-ink-muted">Ayat {{ $lastAyah->nomor_ayat }} dari {{ $lastSurah->jumlah_ayat }}</span>
+                            <a
+                                href="{{ route('quran.show', ['surah' => $lastSurah->id, 'ayat' => $lastAyah->nomor_ayat]) }}"
+                                wire:navigate
+                                class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
                             >
-                                <span class="text-brand-teal">&#9654;</span> Putar
-                            </button>
-                        @endif
+                                <span>Lanjutkan</span>
+                                <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    @else
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-label-sm font-semibold">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                    </svg>
+                                    Penanda Bacaan
+                                </span>
+                                <span class="text-label-sm text-ink-muted">Belum ada penanda</span>
+                            </div>
+
+                            <h2 class="text-headline-sm text-ink font-bold">Lanjutkan Bacaan Terakhir</h2>
+
+                            <div class="rounded-xl bg-surface-low border border-line p-5 text-center space-y-2">
+                                <div class="w-10 h-10 mx-auto rounded-full bg-brand-gold/15 flex items-center justify-center text-brand-gold">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                <p class="text-body-md font-bold text-ink">Belum Ada Penanda Ayat</p>
+                                <p class="text-body-sm text-ink-muted max-w-xs mx-auto">
+                                    Tandai ayat dengan ikon penanda saat membaca Al-Qur'an untuk menyimpan bacaan terakhir Anda di sini.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-body-sm text-ink-muted">114 Surah Tersedia</span>
+                            <a
+                                href="{{ route('quran.index') }}"
+                                wire:navigate
+                                class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
+                            >
+                                <span>Mulai Membaca</span>
+                                <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Kartu Kanan: Ayat Harian --}}
+                <div class="lg:col-span-7 lq-card flex flex-col justify-between space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold-pale text-brand-navy text-label-sm font-semibold">
+                            <span class="text-brand-gold">&#10022;</span> Ayat Harian
+                        </span>
                         <a
                             href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-medium text-ink-muted hover:text-ink transition"
+                            class="text-label-sm text-ink-muted hover:text-brand-teal font-medium transition"
                         >
-                            Baca Lengkap
+                            QS. {{ $dailyAyah?->surah?->nama_latin ?? 'Al-Baqarah' }} · {{ $dailyAyah?->nomor_ayat ?? 255 }}
                         </a>
                     </div>
 
-                    <a
-                        href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                        wire:navigate
-                        aria-label="Buka Ayat Harian"
-                        class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold transition"
-                    >
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </section>
+                    <p class="quran-arabic text-ink text-right py-1" dir="rtl" lang="ar">
+                        {{ $dailyAyah ? \Illuminate\Support\Str::words($dailyAyah->teks_arab, 10, ' ...') : 'اللّٰهُ لَآ اِلٰهَ اِلَّا هُوَ الْحَيُّ الْقَيُّوْمُ' }}
+                    </p>
 
-        {{-- Baris Pintasan --}}
-        <section aria-label="Pintasan Surah dan Doa" class="flex flex-wrap items-center gap-2.5">
-            <span class="inline-flex items-center gap-1.5 text-label-md text-ink-muted mr-1">
-                <span class="text-brand-gold">&#9889;</span> Pintasan:
-            </span>
-            @foreach ($shortcuts as $shortcut)
-                <a
-                    href="{{ $shortcut['url'] }}"
-                    wire:navigate
-                    class="inline-flex items-center min-h-[36px] px-4 py-1.5 rounded-full bg-surface-card border border-line text-body-sm font-medium text-ink hover:border-brand-teal hover:text-brand-teal transition"
-                >
-                    {{ $shortcut['label'] }}
-                </a>
-            @endforeach
-        </section>
+                    <div class="space-y-1.5">
+                        <p class="text-body-sm text-brand-teal italic">
+                            {{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->teks_latin, 95) : 'Allāhu lā ilāha illā huwal-ḥayyul-qayyūm(u)...' }}
+                        </p>
+                        <p class="text-body-sm text-ink-muted leading-relaxed">
+                            "{{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->terjemahan, 165) : 'Allah, tidak ada tuhan selain Dia, Yang Maha Hidup lagi terus-menerus mengurus (makhluk-Nya)...' }}"
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-line/60">
+                        <div class="flex items-center gap-2">
+                            @if ($dailyAyah?->audio_url)
+                                <button
+                                    type="button"
+                                    x-data
+                                    @click="$store.audioPlayer.playTrack({ surahId: 2, surahName: 'Al-Baqarah', ayahNumber: 255, totalAyat: 286, src: '{{ $dailyAyah->audio_url }}' })"
+                                    class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-semibold text-ink hover:border-brand-teal transition"
+                                >
+                                    <span class="text-brand-teal">&#9654;</span> Putar
+                                </button>
+                            @endif
+                            <a
+                                href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
+                                wire:navigate
+                                class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-medium text-ink-muted hover:text-ink transition"
+                            >
+                                Baca Lengkap
+                            </a>
+                        </div>
+
+                        <a
+                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
+                            wire:navigate
+                            aria-label="Buka Ayat Harian"
+                            class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold transition"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        @endauth
 
         {{-- Daftar Mushaf (12 Surah Real dari Database) --}}
         <section class="space-y-6 pt-2">
@@ -309,43 +237,32 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($previewSurahs as $surah)
                     @php
-                        $isActiveCard = $surah->id === 2;
-                        $minJuz = (int) ($surah->ayahs_min_juz ?: 1);
-                        $maxJuz = (int) ($surah->ayahs_max_juz ?: $minJuz);
-                        $juzBadge = $minJuz === $maxJuz ? "Juz {$minJuz}" : "Juz {$minJuz}-{$maxJuz}";
                         $turunLabel = ($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun) === 'mekah' ? 'Makkiyah' : 'Madaniyah';
                     @endphp
                     <a
                         href="{{ route('quran.show', $surah->id) }}"
                         wire:navigate
-                        class="rounded-card p-5 border transition duration-150 flex items-center justify-between gap-4 {{ $isActiveCard ? 'bg-brand-navy border-brand-navy text-white shadow-md' : 'bg-surface-card border-line text-ink hover:border-brand-gold shadow-card' }}"
+                        class="rounded-card p-5 border border-line bg-surface-card text-ink hover:border-brand-gold shadow-card transition duration-150 flex items-center justify-between gap-4"
                     >
                         <div class="flex items-center gap-3.5 min-w-0">
-                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-body-sm font-bold shrink-0 {{ $isActiveCard ? 'bg-brand-gold text-brand-navy' : 'bg-surface-low text-ink border border-line/60' }}">
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-body-sm font-bold shrink-0 bg-surface-low text-ink border border-line/60">
                                 {{ $surah->id }}
                             </span>
                             <div class="min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <p class="text-title-md font-semibold truncate {{ $isActiveCard ? 'text-white' : 'text-ink' }}">
-                                        {{ $surah->nama_latin }}
-                                    </p>
-                                    @if ($isActiveCard)
-                                        <span class="px-2 py-0.5 rounded-full text-label-sm bg-brand-gold text-brand-navy font-semibold">
-                                            {{ $juzBadge }}
-                                        </span>
-                                    @endif
-                                </div>
-                                <p class="text-label-sm truncate mt-0.5 {{ $isActiveCard ? 'text-brand-gold-pale' : 'text-ink-muted' }}">
+                                <p class="text-title-md font-semibold truncate text-ink">
+                                    {{ $surah->nama_latin }}
+                                </p>
+                                <p class="text-label-sm truncate mt-0.5 text-ink-muted">
                                     {{ $surah->arti }} · {{ $surah->jumlah_ayat }} Ayat
                                 </p>
                             </div>
                         </div>
 
                         <div class="text-right shrink-0">
-                            <p class="font-arabic text-xl leading-normal {{ $isActiveCard ? 'text-brand-gold' : 'text-ink' }}" dir="rtl" lang="ar">
+                            <p class="font-arabic text-xl leading-normal text-ink" dir="rtl" lang="ar">
                                 {{ $surah->nama_arab }}
                             </p>
-                            <p class="text-label-sm mt-0.5 {{ $isActiveCard ? 'text-brand-gold-pale/80' : 'text-ink-muted' }}">
+                            <p class="text-label-sm mt-0.5 text-ink-muted">
                                 {{ $turunLabel }}
                             </p>
                         </div>
@@ -363,91 +280,153 @@
 
         {{-- Dua Kartu Fitur: Tahlil & Doa Harian --}}
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-            <div class="lq-card relative overflow-hidden flex flex-col justify-between space-y-6">
-                <div class="space-y-4 relative z-10">
-                    <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-teal/10 text-brand-teal">
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                    </span>
-
-                    <div>
-                        <p class="text-label-md uppercase text-brand-teal">Panduan Ibadah</p>
-                        <h2 class="text-headline-md text-ink mt-1">Tahlil &amp; Doa Arwah</h2>
+            <div class="rounded-card border border-line bg-surface-card shadow-card overflow-hidden flex flex-col justify-between group hover:border-brand-gold/50 transition duration-200">
+                <div>
+                    {{-- Foto Tahlil & Doa Arwah --}}
+                    <div class="relative h-48 sm:h-52 w-full overflow-hidden bg-surface-low">
+                        <img
+                            src="{{ asset('images/tahlil.jpg') }}"
+                            alt="Tahlil & Doa Arwah"
+                            class="w-full h-full object-cover object-[center_60%] group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                        >
                     </div>
 
-                    <p class="text-body-md text-ink-muted leading-relaxed">
-                        Bacaan susunan tahlil lengkap dengan panduan suara, dzikir, dan terjemahan. Disusun berurutan untuk memudahkan majelis taklim maupun bacaan mandiri di rumah.
-                    </p>
+                    <div class="p-6 sm:p-7 space-y-4">
+                        <h2 class="text-headline-md text-ink">Tahlil &amp; Doa Arwah</h2>
 
-                    <ul class="space-y-2 text-body-sm text-ink-muted pt-1">
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-teal font-bold">&#10003;</span>
-                            <span>Urutan bacaan tahlil standar Kemenag</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-teal font-bold">&#10003;</span>
-                            <span>Dilengkapi doa arwah khusus orang tua</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-teal font-bold">&#10003;</span>
-                            <span>Teks Arab besar nyaman dibaca bersama</span>
-                        </li>
-                    </ul>
+                        <p class="text-body-md text-ink-muted leading-relaxed">
+                            Bacaan susunan tahlil lengkap dengan panduan suara, dzikir, dan terjemahan. Disusun berurutan untuk memudahkan majelis taklim maupun bacaan mandiri di rumah.
+                        </p>
+
+                        <ul class="space-y-2 text-body-sm text-ink-muted pt-1">
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Urutan bacaan tahlil standar Kemenag</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Dilengkapi doa arwah khusus orang tua</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Teks Arab besar nyaman dibaca bersama</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="pt-2 relative z-10">
-                    <a href="{{ route('tahlil.index') }}" wire:navigate class="lq-btn-primary gap-2 text-body-sm">
+                <div class="p-6 sm:p-7 pt-0">
+                    <a href="{{ route('tahlil.index') }}" wire:navigate class="lq-btn-primary text-body-sm">
                         <span>Buka Tahlil</span>
-                        <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
             </div>
 
-            <div class="lq-card relative overflow-hidden flex flex-col justify-between space-y-6">
-                <div class="space-y-4 relative z-10">
-                    <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-brand-gold-pale text-brand-navy">
-                        <svg class="w-6 h-6 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </span>
-
-                    <div>
-                        <p class="text-label-md uppercase text-brand-gold">Hisnul Muslim</p>
-                        <h2 class="text-headline-md text-ink mt-1">Doa Harian &amp; Dzikir Pagi Petang</h2>
+            <div class="rounded-card border border-line bg-surface-card shadow-card overflow-hidden flex flex-col justify-between group hover:border-brand-gold/50 transition duration-200">
+                <div>
+                    {{-- Foto Doa Harian & Dzikir Pagi Petang --}}
+                    <div class="relative h-48 sm:h-52 w-full overflow-hidden bg-surface-low">
+                        <img
+                            src="{{ asset('images/doa-harian.jpg') }}"
+                            alt="Doa Harian & Dzikir Pagi Petang"
+                            class="w-full h-full object-cover object-[center_45%] group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                        >
                     </div>
 
-                    <p class="text-body-md text-ink-muted leading-relaxed">
-                        Kumpulan doa mustajab sehari-hari dari Al-Qur'an dan Hadits Shahih. Dilengkapi counter tasbih digital dan pengingat waktu dzikir pagi-petang.
-                    </p>
+                    <div class="p-6 sm:p-7 space-y-4">
+                        <h2 class="text-headline-md text-ink">Doa Harian &amp; Dzikir Pagi Petang</h2>
 
-                    <ul class="space-y-2 text-body-sm text-ink-muted pt-1">
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-gold font-bold">&#10003;</span>
-                            <span>Dzikir pagi dan petang Al-Ma'tsurat</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-gold font-bold">&#10003;</span>
-                            <span>Doa perlindungan keluarga dan rezeki</span>
-                        </li>
-                        <li class="flex items-center gap-2.5">
-                            <span class="text-brand-gold font-bold">&#10003;</span>
-                            <span>Audio pelafalan untuk hafalan doa</span>
-                        </li>
-                    </ul>
+                        <p class="text-body-md text-ink-muted leading-relaxed">
+                            Kumpulan doa mustajab sehari-hari dari Al-Qur'an dan Hadits Shahih. Dilengkapi counter tasbih digital dan pengingat waktu dzikir pagi-petang.
+                        </p>
+
+                        <ul class="space-y-2 text-body-sm text-ink-muted pt-1">
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Dzikir pagi dan petang Al-Ma'tsurat</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Doa perlindungan keluarga dan rezeki</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <span class="text-brand-gold font-bold">&#10003;</span>
+                                <span>Audio pelafalan untuk hafalan doa</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="pt-2 relative z-10">
-                    <a
-                        href="{{ route('doa.index') }}"
-                        wire:navigate
-                        class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-                    >
+                <div class="p-6 sm:p-7 pt-0">
+                    <a href="{{ route('doa.index') }}" wire:navigate class="lq-btn-primary text-body-sm">
                         <span>Jelajahi Doa</span>
-                        <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
             </div>
         </section>
+
+        @guest
+            {{-- Banner CTA Pendaftaran Akun dengan Background Foto bacaquran.jpg --}}
+            <div class="rounded-card text-white border border-brand-gold/30 shadow-card relative overflow-hidden bg-[#071a2a] min-h-[400px] flex items-center">
+                {{-- Foto Background --}}
+                <img
+                    src="{{ asset('images/bacaquran.jpg') }}"
+                    alt="Membaca Al-Qur'an Digital Lentera Quran"
+                    class="absolute inset-0 w-full h-full object-cover object-left md:object-[12%_center] select-none"
+                    loading="lazy"
+                >
+
+                {{-- Overlay Gradasi untuk Menjaga Kontras & Keterbacaan Teks --}}
+                <div class="absolute inset-0 bg-gradient-to-t from-[#061623]/95 via-[#061623]/85 to-[#061623]/40 md:bg-gradient-to-r md:from-black/10 md:via-[#061623]/80 md:to-[#061623]/95 pointer-events-none"></div>
+                <div class="absolute -right-12 -top-12 w-80 h-80 rounded-full bg-brand-gold/15 blur-3xl pointer-events-none"></div>
+
+                {{-- Tata Letak Konten: Sisi Kiri Terbuka untuk Foto Anak Membaca Quran, Sisi Kanan untuk Teks & Tombol Aksi --}}
+                <div class="relative z-10 w-full p-6 sm:p-8 lg:p-12">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center">
+                        {{-- Kolom Kiri Kosong agar Visual Anak Membaca Al-Qur'an Terlihat Jelas --}}
+                        <div class="hidden md:block md:col-span-5 pointer-events-none"></div>
+
+                        {{-- Kolom Kanan: Teks Persuasif & Tombol Registrasi --}}
+                        <div class="md:col-span-7 space-y-4 sm:space-y-5">
+                            <h3 class="text-headline-md sm:text-headline-lg font-bold tracking-tight text-white leading-snug">
+                                Jangan Biarkan Tilawah &amp; Amalan Doa Anda Terputus
+                            </h3>
+
+                            <p class="text-body-md text-white/85 leading-relaxed max-w-xl">
+                                Pernahkah Anda lupa terakhir membaca ayat ke berapa? Dengan membuat akun Lentera Quran, semua tilawah Anda tersimpan otomatis di cloud dan bisa diakses dari perangkat mana pun.
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-x-5 gap-y-2.5 pt-1">
+                                <div class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-gold text-brand-navy text-xs font-bold shrink-0">&#10003;</span>
+                                    <span class="text-body-sm text-white font-medium">Penanda Ayat</span>
+                                </div>
+                                <div class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-gold text-brand-navy text-xs font-bold shrink-0">&#10003;</span>
+                                    <span class="text-body-sm text-white font-medium">Koleksi Doa Favorit</span>
+                                </div>
+                                <div class="inline-flex items-center gap-2">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-gold text-brand-navy text-xs font-bold shrink-0">&#10003;</span>
+                                    <span class="text-body-sm text-white font-medium">100% Bebas Iklan</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <a
+                                    href="{{ route('register') }}"
+                                    wire:navigate
+                                    class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy font-bold text-body-md shadow-lg hover:shadow-xl transition-all duration-200 group text-center"
+                                >
+                                    <span>Daftar Akun Gratis Sekarang</span>
+                                    <span class="group-hover:translate-x-1 transition-transform" aria-hidden="true">&rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endguest
     </div>
 </x-app-layout>
