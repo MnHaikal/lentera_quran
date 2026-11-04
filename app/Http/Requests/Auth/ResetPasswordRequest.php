@@ -20,9 +20,6 @@ class ResetPasswordRequest extends FormRequest
         $this->normalizeEmail();
     }
 
-    /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -32,9 +29,6 @@ class ResetPasswordRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [

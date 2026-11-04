@@ -30,7 +30,6 @@ Route::get('/doa', [DoaController::class, 'index'])->name('doa.index');
 Route::get('/doa/{slug}', [DoaController::class, 'show'])->name('doa.show');
 
 Route::middleware(['auth', 'auth.session'])->group(function () {
-    // Bookmarks / Penanda
     Route::get('/penanda', [BookmarkController::class, 'index'])->name('bookmarks.index');
     Route::get('/tersimpan', [BookmarkController::class, 'index'])->name('tersimpan');
     Route::post('/bookmarks/toggle', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
@@ -51,16 +50,13 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         ->middleware('throttle:60,1')
         ->name('bookmark.catatan.update');
 
-    // Terakhir Dibaca
     Route::post('/al-quran/{surah}/terakhir-dibaca', [LastReadController::class, 'store'])
         ->middleware('throttle:60,1')
         ->name('terakhir-dibaca.store');
 
-    // Pengaturan
     Route::get('/pengaturan', [SettingController::class, 'edit'])->name('pengaturan.edit');
     Route::put('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
 
-    // Profil
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
     Route::match(['put', 'patch'], '/profil', [ProfileController::class, 'update'])->name('profil.update');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profil.destroy');
@@ -74,11 +70,9 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
     Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/super-admin', [AdminDashboardController::class, 'index'])->name('super-admin.dashboard');
 
-    // Surah
     Route::get('/admin/surah', [AdminSurahController::class, 'index'])->name('admin.surah.index');
     Route::put('/admin/surah/{surah}', [AdminSurahController::class, 'update'])->whereNumber('surah')->name('admin.surah.update');
 
-    // Tahlil
     Route::get('/admin/tahlil', [AdminTahlilController::class, 'index'])->name('admin.tahlil.index');
     Route::get('/admin/tahlil/export', [AdminTahlilController::class, 'export'])->name('admin.tahlil.export');
     Route::post('/admin/tahlil', [AdminTahlilController::class, 'store'])->name('admin.tahlil.store');
@@ -86,14 +80,12 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
     Route::delete('/admin/tahlil/{tahlil:id}', [AdminTahlilController::class, 'destroy'])->name('admin.tahlil.destroy');
     Route::post('/admin/tahlil/reorder', [AdminTahlilController::class, 'reorder'])->name('admin.tahlil.reorder');
 
-    // Doa
     Route::get('/admin/doa', [AdminDoaController::class, 'index'])->name('admin.doa.index');
     Route::get('/admin/doa/export', [AdminDoaController::class, 'export'])->name('admin.doa.export');
     Route::post('/admin/doa', [AdminDoaController::class, 'store'])->name('admin.doa.store');
     Route::put('/admin/doa/{doa:id}', [AdminDoaController::class, 'update'])->name('admin.doa.update');
     Route::delete('/admin/doa/{doa:id}', [AdminDoaController::class, 'destroy'])->name('admin.doa.destroy');
 
-    // Kategori Doa
     Route::get('/admin/kategori-doa', [DoaCategoryController::class, 'index'])->name('admin.doa-category.index');
     Route::post('/admin/kategori-doa', [DoaCategoryController::class, 'store'])->name('admin.doa-category.store');
     Route::put('/admin/kategori-doa/{kategoriDoa:id}', [DoaCategoryController::class, 'update'])->name('admin.doa-category.update');
@@ -101,7 +93,6 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
     Route::post('/admin/kategori-doa/reorder', [DoaCategoryController::class, 'reorder'])->name('admin.doa-category.reorder');
     Route::get('/admin/doa-category', fn () => redirect()->route('admin.doa-category.index'))->name('admin.kategori-doa.index');
 
-    // Pengguna (Super Admin)
     Route::middleware('super_admin')->group(function () {
         Route::get('/admin/pengguna', [AdminUserController::class, 'index'])->name('admin.pengguna.index');
         Route::get('/admin/pengguna/create', [AdminUserController::class, 'create'])->name('admin.pengguna.create');
@@ -110,7 +101,6 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
         Route::put('/admin/pengguna/{user:id}', [AdminUserController::class, 'update'])->name('admin.pengguna.update');
         Route::delete('/admin/pengguna/{user:id}', [AdminUserController::class, 'destroy'])->name('admin.pengguna.destroy');
 
-        // Aliases for admin.users.*
         Route::get('/admin/users', fn () => redirect()->route('admin.pengguna.index'))->name('admin.users.index');
         Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::put('/admin/users/{user:id}', [AdminUserController::class, 'update'])->name('admin.users.update');

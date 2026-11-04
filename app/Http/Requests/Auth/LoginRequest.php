@@ -24,9 +24,6 @@ class LoginRequest extends FormRequest
         $this->normalizeEmail();
     }
 
-    /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -41,9 +38,6 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array<string, string>
-     */
     public function messages(): array
     {
         return [
@@ -53,9 +47,6 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -72,9 +63,6 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function ensureIsNotRateLimited(): void
     {
         $emailLocked = RateLimiter::tooManyAttempts($this->throttleKey(), 5);
