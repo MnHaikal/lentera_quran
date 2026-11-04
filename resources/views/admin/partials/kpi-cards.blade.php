@@ -18,18 +18,18 @@
 
         <div class="flex items-baseline gap-2.5 mt-1.5">
             <p :class="darkPreview ? 'text-white' : 'text-[#0F2D4F]'" class="text-2xl sm:text-[26px] font-extrabold text-[#0F2D4F] tracking-tight">
-                124.810
+                {{ number_format($bookmarkCount ?? 0, 0, ',', '.') }}
             </p>
             <span class="inline-flex items-center gap-0.5 text-[11px] font-bold text-[#D99B26]">
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                 </svg>
-                <span>+8.1%</span>
+                <span>{{ ($notesCount ?? 0) > 0 ? ($notesCount . ' Catatan') : (($bookmarkCount ?? 0) . ' Penanda') }}</span>
             </span>
         </div>
 
         <div class="h-1.5 w-full rounded-full bg-[#F2EFE4] overflow-hidden mt-4">
-            <div class="h-full w-[62%] rounded-full bg-[#E2B14C]"></div>
+            <div class="h-full rounded-full bg-[#E2B14C]" style="width: {{ ($bookmarkCount ?? 0) > 0 ? min(100, max(25, ($bookmarkCount ?? 1) * 25)) : 25 }}%;"></div>
         </div>
     </article>
 
@@ -51,10 +51,10 @@
 
         <div class="mt-1">
             <p :class="darkPreview ? 'text-white' : 'text-[#0F2D4F]'" class="text-xl sm:text-[21px] font-extrabold text-[#0F2D4F] tracking-tight leading-snug">
-                QS. Al-Kahf
+                QS. {{ $favoriteSurah->nama_latin ?? 'Al-Baqarah' }}
             </p>
             <p :class="darkPreview ? 'text-[#A9BDD3]' : 'text-[#6E7E8D]'" class="text-[11px] text-[#6E7E8D] mt-0.5">
-                31.420 sesi tilawah pekan ini
+                {{ ($favoriteSurahBookmarks ?? 0) > 0 ? ($favoriteSurahBookmarks . ' penanda jamaah') : (($favoriteSurah->jumlah_ayat ?? 286) . ' Ayat') }} &bull; {{ ucfirst($favoriteSurah->tempat_turun ?? 'Madinah') }}
             </p>
         </div>
 
@@ -63,14 +63,14 @@
         </div>
     </article>
 
-    {{-- KPI 3: Murottal Streaming Time (Headphones Icon) --}}
+    {{-- KPI 3: Murottal Paling Banyak Didengar (Headphones Icon) --}}
     <article
         :class="darkPreview ? 'bg-[#0F2440] border-white/10' : 'bg-white border-[#EAE3D2]'"
         class="bg-white rounded-2xl border border-[#EAE3D2] p-4 sm:p-5 shadow-sm flex flex-col justify-between"
     >
         <div class="flex items-start justify-between gap-3">
             <p :class="darkPreview ? 'text-[#A9BDD3]' : 'text-[#5B6B7A]'" class="text-xs font-semibold text-[#5B6B7A]">
-                Murottal Streaming Time
+                Murottal Paling Banyak Didengar
             </p>
             <span class="w-8 h-8 rounded-lg bg-[#E4F3F3] text-[#1D6D75] flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -80,16 +80,16 @@
         </div>
 
         <div class="mt-1">
-            <p :class="darkPreview ? 'text-white' : 'text-[#0F2D4F]'" class="text-xl sm:text-[22px] font-extrabold text-[#0F2D4F] tracking-tight leading-snug">
-                18.940 Jam
+            <p :class="darkPreview ? 'text-white' : 'text-[#0F2D4F]'" class="text-xl sm:text-[21px] font-extrabold text-[#0F2D4F] tracking-tight leading-snug">
+                QS. {{ $mostStreamedSurah->nama_latin ?? 'Al-Baqarah' }}
             </p>
             <p class="text-[11px] font-semibold text-[#1D6D75] mt-0.5">
-                Qari teratas: Misyari Rasyid
+                {{ $mostStreamedSubtitle ?? 'Belum ada pemutaran' }}
             </p>
         </div>
 
         <div class="h-1.5 w-full rounded-full bg-[#F2EFE4] overflow-hidden mt-3">
-            <div class="h-full w-[48%] rounded-full bg-[#2A7B84]"></div>
+            <div class="h-full rounded-full bg-[#2A7B84]" style="width: {{ $mostStreamedProgressPercent ?? 50 }}%;"></div>
         </div>
     </article>
 </section>

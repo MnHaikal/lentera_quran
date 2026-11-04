@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ayah;
+use App\Models\MurottalStreamLog;
 use App\Models\Surah;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -146,6 +147,26 @@ class QuranController extends Controller
             'src' => $surah->audio_url,
             'qariName' => config('quran.qari_name', 'Misyari Rasyid Al-Afasi'),
         ]);
+    }
+
+    public function recordStreamPing(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'surah_id' => 'required|integer|min:1|max:114',
+            'ayah_number' => 'nullable|integer',
+            'duration_seconds' => 'required|integer|min:1|max:3600',
+            'qari' => 'nullable|string|max:100',
+        ]);
+
+        $log = MurottalStreamLog::create([
+            'user_id' => auth()->id(),
+            'surah_id' => $validated['surah_id'],
+            'ayah_number' => $validated['ayah_number'] ?? null,
+            'duration_seconds' => $validated['duration_seconds'],
+            'qari' => $validated['qari'] ?? config('quran.qari_name', 'Misyari Rasyid Al-Afasi'),
+        ]);
+
+        return response()->json(['success' => true, 'id' => $log->id]);
     }
 
     private function applySurahFilters(Builder $query, string $filter, int $juz, string $search): void

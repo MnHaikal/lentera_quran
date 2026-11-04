@@ -57,8 +57,8 @@ class DoaController extends Controller
             }
         }
 
-        // 7 doa per halaman sesuai desain mockup
-        $doas = $query->orderBy('id', 'asc')->paginate(7)->withQueryString();
+        // 10 doa per halaman sesuai standar Surah & Ayat
+        $doas = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
 
         $categories = DoaCategory::orderBy('urutan')->get();
 

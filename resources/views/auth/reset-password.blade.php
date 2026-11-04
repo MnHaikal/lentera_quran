@@ -17,7 +17,7 @@
     >
         @csrf
 
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+        <input type="hidden" name="token" value="{{ $request->route('token') ?? old('token', $request->token) }}">
 
         <div>
             <label for="email" class="block text-label-md font-bold text-brand-navy dark:text-ink mb-2">
@@ -37,10 +37,11 @@
                     placeholder="nama@email.com"
                     maxlength="150"
                     required
-                    autofocus
+                    readonly
+                    tabindex="-1"
                     autocomplete="username"
                     @if ($errors->has('email')) aria-invalid="true" aria-describedby="email-error" @endif
-                    class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-4 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
+                    class="w-full min-h-[48px] rounded-xl bg-surface-low border border-line pl-11 pr-4 py-3 text-body-md text-ink-muted cursor-not-allowed select-none focus:outline-none"
                 >
             </div>
             <x-input-error id="email-error" :messages="$errors->get('email')" class="mt-2" />
@@ -64,6 +65,7 @@
                     minlength="8"
                     maxlength="64"
                     required
+                    autofocus
                     autocomplete="new-password"
                     @if ($errors->has('password')) aria-invalid="true" aria-describedby="password-error" @endif
                     class="w-full min-h-[48px] rounded-xl bg-surface-card border border-line pl-11 pr-11 py-3 text-body-md text-ink placeholder-ink-muted/70 transition focus:border-brand-teal focus:ring-0 focus:shadow-teal-ring focus:outline-none"
@@ -134,10 +136,13 @@
                 :disabled="submitting"
                 class="w-full min-h-[50px] rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy text-body-md font-bold shadow-sm inline-flex items-center justify-center gap-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
+                <template x-if="submitting">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-brand-navy" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </template>
                 <span x-text="submitting ? 'Memproses...' : 'Simpan Kata Sandi Baru'">Simpan Kata Sandi Baru</span>
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
             </button>
         </div>
     </form>

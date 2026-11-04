@@ -32,6 +32,7 @@ class ForgotPasswordRequest extends FormRequest
                 'email:rfc',
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/',
                 'max:150',
+                'exists:users,email',
             ],
         ];
     }
@@ -46,6 +47,7 @@ class ForgotPasswordRequest extends FormRequest
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'email.regex' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'email.max' => 'Alamat email tidak boleh lebih dari 150 karakter.',
+            'email.exists' => 'Alamat email belum terdaftar dalam sistem.',
         ];
     }
 }

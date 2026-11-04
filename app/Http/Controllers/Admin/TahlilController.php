@@ -39,20 +39,21 @@ class TahlilController extends Controller
             });
         }
 
-        // Filter Status (terbit / draf)
-        $status = $request->input('status');
-        if ($status === 'terbit') {
-            $query->where('is_published', true);
-        } elseif ($status === 'draf') {
-            $query->where('is_published', false);
+        // Filter Jumlah Baca (1x, 3x, 7x, 10x, 33x, dst)
+        if ($jumlahBaca = $request->input('jumlah_baca')) {
+            if (is_numeric($jumlahBaca)) {
+                $query->where('jumlah_baca', (int) $jumlahBaca);
+            }
         }
 
-        // 6 bacaan per halaman sesuai mockup (Menampilkan 1-6 dari 24 bacaan)
-        $tahlilItems = $query->orderBy('urutan', 'asc')->paginate(6)->withQueryString();
+        // 10 bacaan per halaman sesuai standar Surah & Ayat
+        $tahlilItems = $query->orderBy('urutan', 'asc')->paginate(10)->withQueryString();
 
         $totalTahlil = TahlilItem::count();
-        $totalTerbit = TahlilItem::where('is_published', true)->count();
-        $totalDraf = TahlilItem::where('is_published', false)->count();
+        $distinctJumlahBaca = TahlilItem::distinct()->orderBy('jumlah_baca', 'asc')->pluck('jumlah_baca')->all();
+        if (empty($distinctJumlahBaca)) {
+            $distinctJumlahBaca = [1, 3, 7, 10, 33];
+        }
 
         $surahCount = Surah::count() ?: 114;
         $tahlilCount = $totalTahlil ?: 24;
@@ -63,8 +64,9 @@ class TahlilController extends Controller
         return view('admin.tahlil.index', [
             'tahlilItems' => $tahlilItems,
             'totalTahlil' => $totalTahlil,
-            'totalTerbit' => $totalTerbit,
-            'totalDraf' => $totalDraf,
+            'distinctJumlahBaca' => $distinctJumlahBaca,
+            'totalTerbit' => $totalTahlil,
+            'totalDraf' => 0,
             'surahCount' => $surahCount,
             'tahlilCount' => $tahlilCount,
             'doaCount' => $doaCount,

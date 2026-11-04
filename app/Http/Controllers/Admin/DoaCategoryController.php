@@ -36,8 +36,8 @@ class DoaCategoryController extends Controller
             });
         }
 
-        // 7 kategori per halaman sesuai desain mockup
-        $categories = $query->orderBy('urutan', 'asc')->paginate(7)->withQueryString();
+        // 10 kategori per halaman sesuai standar Surah & Ayat
+        $categories = $query->orderBy('urutan', 'asc')->paginate(10)->withQueryString();
 
         $totalCategories = DoaCategory::count();
         $totalDoas = Doa::count();

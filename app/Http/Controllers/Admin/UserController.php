@@ -51,8 +51,8 @@ class UserController extends Controller
             }
         }
 
-        // Urutkan ID asc atau terdaftar
-        $users = $query->orderBy('id', 'asc')->paginate(5)->withQueryString();
+        // 10 pengguna per halaman sesuai standar Surah & Ayat
+        $users = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
 
         $totalUsers = User::count();
         $surahCount = Surah::count() ?: 114;

@@ -125,3 +125,84 @@
         </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        let streamTimer = null;
+        let lastPlayedTime = 0;
+        let accumulatedSeconds = 0;
+
+        function getAudioEl() {
+            return document.getElementById('lentera-audio-element');
+        }
+
+        function sendStreamPing() {
+            if (accumulatedSeconds < 3) return;
+            const player = window.Alpine?.store?.('audioPlayer');
+            if (!player || !player.surahId) return;
+
+            const secondsToSend = accumulatedSeconds;
+            accumulatedSeconds = 0;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) return;
+
+            fetch('{{ route("quran.audio-stream-ping") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    surah_id: player.surahId,
+                    ayah_number: player.ayahNumber || null,
+                    duration_seconds: secondsToSend,
+                    qari: player.qariName || 'Misyari Rasyid Al-Afasi'
+                })
+            }).catch(function() {});
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = getAudioEl();
+            if (!audio) return;
+
+            audio.addEventListener('play', function() {
+                lastPlayedTime = audio.currentTime;
+                if (!streamTimer) {
+                    streamTimer = setInterval(function() {
+                        if (!audio.paused && !audio.ended) {
+                            const now = audio.currentTime;
+                            const diff = Math.floor(now - lastPlayedTime);
+                            if (diff > 0 && diff < 30) {
+                                accumulatedSeconds += diff;
+                            }
+                            lastPlayedTime = now;
+                            if (accumulatedSeconds >= 15) {
+                                sendStreamPing();
+                            }
+                        }
+                    }, 5000);
+                }
+            });
+
+            audio.addEventListener('pause', function() {
+                const now = audio.currentTime;
+                const diff = Math.floor(now - lastPlayedTime);
+                if (diff > 0 && diff < 30) {
+                    accumulatedSeconds += diff;
+                }
+                lastPlayedTime = now;
+                sendStreamPing();
+            });
+
+            audio.addEventListener('ended', function() {
+                sendStreamPing();
+            });
+
+            window.addEventListener('beforeunload', function() {
+                sendStreamPing();
+            });
+        });
+    })();
+</script>

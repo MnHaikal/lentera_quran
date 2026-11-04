@@ -8,14 +8,8 @@
     <title>@yield('title', 'Super Admin Dashboard — Lentera Quran')</title>
 
     <script>
-        (function () {
-            try {
-                var stored = localStorage.getItem('lq_theme') || 'sistem';
-                var isDark = stored === 'gelap' || (stored === 'sistem' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                document.documentElement.classList.toggle('dark', isDark);
-                document.documentElement.dataset.themePreference = stored;
-            } catch (e) {}
-        })();
+        document.documentElement.classList.remove('dark');
+        try { localStorage.removeItem('lq_theme'); } catch (e) {}
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -50,6 +44,7 @@
         </div>
     </div>
 
+    @stack('modals')
     @livewireScripts
 </body>
 </html>

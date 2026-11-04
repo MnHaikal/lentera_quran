@@ -18,6 +18,7 @@ Route::get('/', [HomeController::class, 'index'])->name('beranda');
 Route::get('/al-quran', [QuranController::class, 'index'])->name('quran.index');
 Route::get('/al-quran/{surah}', [QuranController::class, 'show'])->whereNumber('surah')->name('quran.show');
 Route::get('/api/audio/track', [QuranController::class, 'audioTrack'])->name('quran.audio-track');
+Route::post('/api/audio/track-stream', [QuranController::class, 'recordStreamPing'])->name('quran.audio-stream-ping');
 Route::get('/tahlil', [TahlilController::class, 'index'])->name('tahlil.index');
 Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])->whereNumber('urutan')->name('tahlil.show');
 Route::get('/doa', [DoaController::class, 'index'])->name('doa.index');
