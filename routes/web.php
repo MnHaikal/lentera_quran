@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\DoaCategoryController;
+use App\Http\Controllers\Admin\AdminDoaCategoryController;
 use App\Http\Controllers\Admin\AdminDoaController;
 use App\Http\Controllers\Admin\AdminSurahController;
 use App\Http\Controllers\Admin\AdminTahlilController;
@@ -86,11 +86,11 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
     Route::put('/admin/doa/{doa:id}', [AdminDoaController::class, 'update'])->name('admin.doa.update');
     Route::delete('/admin/doa/{doa:id}', [AdminDoaController::class, 'destroy'])->name('admin.doa.destroy');
 
-    Route::get('/admin/kategori-doa', [DoaCategoryController::class, 'index'])->name('admin.doa-category.index');
-    Route::post('/admin/kategori-doa', [DoaCategoryController::class, 'store'])->name('admin.doa-category.store');
-    Route::put('/admin/kategori-doa/{kategoriDoa:id}', [DoaCategoryController::class, 'update'])->name('admin.doa-category.update');
-    Route::delete('/admin/kategori-doa/{kategoriDoa:id}', [DoaCategoryController::class, 'destroy'])->name('admin.doa-category.destroy');
-    Route::post('/admin/kategori-doa/reorder', [DoaCategoryController::class, 'reorder'])->name('admin.doa-category.reorder');
+    Route::get('/admin/kategori-doa', [AdminDoaCategoryController::class, 'index'])->name('admin.doa-category.index');
+    Route::post('/admin/kategori-doa', [AdminDoaCategoryController::class, 'store'])->name('admin.doa-category.store');
+    Route::put('/admin/kategori-doa/{kategoriDoa:id}', [AdminDoaCategoryController::class, 'update'])->name('admin.doa-category.update');
+    Route::delete('/admin/kategori-doa/{kategoriDoa:id}', [AdminDoaCategoryController::class, 'destroy'])->name('admin.doa-category.destroy');
+    Route::post('/admin/kategori-doa/reorder', [AdminDoaCategoryController::class, 'reorder'])->name('admin.doa-category.reorder');
     Route::get('/admin/doa-category', fn () => redirect()->route('admin.doa-category.index'))->name('admin.kategori-doa.index');
 
     Route::middleware('super_admin')->group(function () {

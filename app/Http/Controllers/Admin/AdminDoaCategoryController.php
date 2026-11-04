@@ -6,7 +6,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminDoaCategoryRequest;
+use App\Models\Doa;
 use App\Models\DoaCategory;
+use App\Models\Surah;
+use App\Models\TahlilItem;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,59 +20,122 @@ class AdminDoaCategoryController extends Controller
 {
     public function index(Request $request): View
     {
-        $categories = DoaCategory::withCount('doas')->orderBy('urutan')->paginate(15);
+        $query = DoaCategory::query()->withCount('doas');
 
-        return view('admin.kategori-doa.index', compact('categories'));
-    }
+        if ($search = trim((string) $request->input('q', ''))) {
+            $query->where(function ($q) use ($search) {
+                if (is_numeric($search)) {
+                    $q->orWhere('urutan', (int) $search)
+                        ->orWhere('id', (int) $search);
+                }
 
-    public function create(): View
-    {
-        $nextUrutan = (DoaCategory::max('urutan') ?? 0) + 1;
+                $q->orWhere('nama', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
 
-        return view('admin.kategori-doa.create', compact('nextUrutan'));
+        $categories = $query->orderBy('urutan', 'asc')->paginate(7)->withQueryString();
+
+        $totalCategories = DoaCategory::count();
+        $totalDoas = Doa::count();
+
+        $surahCount = Surah::count() ?: 114;
+        $tahlilCount = TahlilItem::count() ?: 24;
+        $doaCount = $totalDoas ?: 185;
+
+        return view('admin.doa-category.index', [
+            'categories' => $categories,
+            'totalCategories' => $totalCategories,
+            'totalDoas' => $totalDoas,
+            'surahCount' => $surahCount,
+            'tahlilCount' => $tahlilCount,
+            'doaCount' => $doaCount,
+            'doaCategoryCount' => $totalCategories,
+        ]);
     }
 
     public function store(AdminDoaCategoryRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['nama']);
+        $validated = $request->validated();
+
+        $baseSlug = Str::slug($validated['nama']);
+        $slug = $baseSlug;
+        $count = 1;
+        while (DoaCategory::where('slug', $slug)->exists()) {
+            $slug = "{$baseSlug}-{$count}";
+            $count++;
+        }
+        $validated['slug'] = $slug;
+
+        if (empty($validated['urutan'])) {
+            $validated['urutan'] = ((int) DoaCategory::max('urutan')) + 1;
         }
 
-        DoaCategory::create($data);
+        $category = DoaCategory::create($validated);
 
-        return redirect()->route('admin.kategori-doa.index')
-            ->with('status', 'Kategori doa berhasil ditambahkan.');
+        return redirect()
+            ->back()
+            ->with('success', "Kategori '{$category->nama}' berhasil ditambahkan.");
     }
 
-    public function edit(DoaCategory $kategori): View
+    public function update(AdminDoaCategoryRequest $request, DoaCategory $kategoriDoa): RedirectResponse
     {
-        return view('admin.kategori-doa.edit', compact('kategori'));
-    }
+        $validated = $request->validated();
 
-    public function update(AdminDoaCategoryRequest $request, DoaCategory $kategori): RedirectResponse
-    {
-        $data = $request->validated();
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['nama']);
+        if ($validated['nama'] !== $kategoriDoa->nama) {
+            $baseSlug = Str::slug($validated['nama']);
+            $slug = $baseSlug;
+            $count = 1;
+            while (DoaCategory::where('slug', $slug)->where('id', '!=', $kategoriDoa->id)->exists()) {
+                $slug = "{$baseSlug}-{$count}";
+                $count++;
+            }
+            $validated['slug'] = $slug;
         }
 
-        $kategori->update($data);
-
-        return redirect()->route('admin.kategori-doa.index')
-            ->with('status', 'Kategori doa berhasil diperbarui.');
-    }
-
-    public function destroy(DoaCategory $kategori): RedirectResponse
-    {
-        if ($kategori->doas()->count() > 0) {
-            return redirect()->route('admin.kategori-doa.index')
-                ->with('error', 'Kategori tidak dapat dihapus karena masih memiliki doa di dalamnya.');
+        if (empty($validated['urutan'])) {
+            $validated['urutan'] = $kategoriDoa->urutan;
         }
 
-        $kategori->delete();
+        $kategoriDoa->update($validated);
 
-        return redirect()->route('admin.kategori-doa.index')
-            ->with('status', 'Kategori doa berhasil dihapus.');
+        return redirect()
+            ->back()
+            ->with('success', "Kategori '{$kategoriDoa->nama}' berhasil diperbarui.");
+    }
+
+    public function destroy(DoaCategory $kategoriDoa): RedirectResponse
+    {
+        $doasCount = $kategoriDoa->doas()->count();
+
+        if ($doasCount > 0) {
+            return redirect()
+                ->back()
+                ->with('error', "Kategori '{$kategoriDoa->nama}' tidak dapat dihapus karena masih memuat {$doasCount} doa.");
+        }
+
+        $nama = $kategoriDoa->nama;
+        $kategoriDoa->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', "Kategori '{$nama}' berhasil dihapus.");
+    }
+
+    public function reorder(Request $request): JsonResponse
+    {
+        $orders = $request->input('orders', []);
+
+        if (is_array($orders)) {
+            foreach ($orders as $index => $id) {
+                DoaCategory::where('id', (int) $id)->update(['urutan' => $index + 1]);
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Urutan susunan kategori berhasil disimpan.',
+        ]);
     }
 }

@@ -16,13 +16,14 @@ class AdminDoaCategoryRequest extends FormRequest
 
     public function rules(): array
     {
-        $categoryId = $this->route('kategori')?->id ?? null;
+        $category = $this->route('kategoriDoa') ?? $this->route('kategori');
+        $categoryId = is_object($category) ? $category->id : $category;
 
         return [
             'nama' => ['required', 'string', 'max:100'],
+            'deskripsi' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:120', Rule::unique('doa_categories', 'slug')->ignore($categoryId)],
-            'urutan' => ['required', 'integer', 'min:1'],
+            'urutan' => ['nullable', 'integer', 'min:1'],
         ];
     }
 }
-
