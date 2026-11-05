@@ -2,9 +2,9 @@
 
 return [
     'reset' => 'Kata sandi Anda berhasil diatur ulang. Silakan masuk dengan kata sandi baru Anda.',
-    'sent' => 'Jika alamat email terdaftar, tautan untuk mengatur ulang kata sandi telah dikirim.',
+    'sent' => 'Tautan untuk mengatur ulang kata sandi berhasil dikirim ke alamat email Anda. Silakan periksa kotak masuk atau spam email Anda.',
     'throttled' => 'Harap tunggu beberapa saat sebelum meminta tautan baru.',
     'token' => 'Token pengaturan ulang kata sandi tidak valid atau telah kedaluwarsa.',
-    'user' => 'Jika alamat email terdaftar, tautan untuk mengatur ulang kata sandi telah dikirim.',
+    'user' => 'Alamat email belum terdaftar dalam sistem.',
 ];
 

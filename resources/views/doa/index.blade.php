@@ -98,9 +98,6 @@
                 <h2 class="text-headline-sm font-bold text-brand-navy dark:text-ink">
                     Daftar Kategori Doa Pilihan
                 </h2>
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-surface-low border border-line text-label-sm font-semibold text-ink-muted">
-                    {{ $categories->total() }} Kategori &middot; {{ $totalDoaCount }} Doa
-                </span>
                 @if ($search !== '')
                     <span class="text-body-sm text-ink-muted">
                         untuk kata kunci <strong class="text-ink">"{{ $search }}"</strong>
@@ -108,28 +105,58 @@
                 @endif
             </div>
 
-            <div class="flex items-center gap-2 self-start sm:self-auto">
-                <label for="doa-sort" class="text-body-sm text-ink-muted whitespace-nowrap">Urutkan:</label>
+            @php
+                $doaSortOptions = [
+                    'urutan' => 'Rekomendasi Utama',
+                    'nama' => 'Nama Kategori (A–Z)',
+                    'jumlah-doa' => 'Jumlah Doa Terbanyak',
+                ];
+                $currentSortLabel = $doaSortOptions[$sort] ?? 'Rekomendasi Utama';
+            @endphp
+
+            <div class="flex items-center gap-2 self-start sm:self-auto" x-data="{ sortDropdownOpen: false }">
+                <span class="text-body-sm text-ink-muted whitespace-nowrap">Urutkan:</span>
                 <div class="relative inline-flex items-center">
-                    <select
-                        id="doa-sort"
-                        onchange="window.location.href = this.value"
-                        class="bg-transparent border-0 py-1 pl-1 pr-7 text-body-sm font-semibold text-ink focus:ring-0 cursor-pointer"
+                    <button
+                        type="button"
+                        @click="sortDropdownOpen = !sortDropdownOpen"
+                        @keydown.escape.window="sortDropdownOpen = false"
+                        class="inline-flex items-center gap-1.5 py-1 text-body-sm font-semibold text-ink hover:text-brand-teal transition cursor-pointer"
                     >
-                        <option value="{{ route('doa.index', array_filter(['q' => $search, 'sort' => 'urutan'])) }}" @selected($sort === 'urutan')>
-                            Rekomendasi Utama
-                        </option>
-                        <option value="{{ route('doa.index', array_filter(['q' => $search, 'sort' => 'nama'])) }}" @selected($sort === 'nama')>
-                            Nama Kategori (A–Z)
-                        </option>
-                        <option value="{{ route('doa.index', array_filter(['q' => $search, 'sort' => 'jumlah-doa'])) }}" @selected($sort === 'jumlah-doa')>
-                            Jumlah Doa Terbanyak
-                        </option>
-                    </select>
+                        <span>{{ $currentSortLabel }}</span>
+                        <svg class="w-3.5 h-3.5 text-ink-muted transition-transform duration-150" :class="sortDropdownOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div
+                        x-show="sortDropdownOpen"
+                        @click.outside="sortDropdownOpen = false"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        style="display: none;"
+                        class="absolute right-0 top-full mt-1.5 w-56 rounded-xl bg-surface-card border border-line shadow-lg py-1.5 z-50 text-body-sm"
+                    >
+                        @foreach ($doaSortOptions as $sortKey => $sortLabel)
+                            <a
+                                href="{{ route('doa.index', array_filter(['q' => $search, 'sort' => $sortKey])) }}"
+                                wire:navigate
+                                class="flex items-center justify-between px-4 py-2 hover:bg-surface-low transition {{ $sort === $sortKey ? 'font-bold text-brand-teal' : 'text-ink' }}"
+                            >
+                                <span>{{ $sortLabel }}</span>
+                                @if ($sort === $sortKey)
+                                    <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
-                <svg class="w-4 h-4 text-ink-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-                </svg>
             </div>
         </div>
 
@@ -228,10 +255,9 @@
                         <a
                             href="{{ route('doa.show', $category->slug) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-sm font-semibold transition shrink-0 bg-surface-low hover:bg-brand-gold-pale text-brand-navy dark:text-ink dark:hover:text-brand-navy"
+                            class="inline-flex items-center px-3.5 py-1.5 rounded-full text-label-sm font-semibold transition shrink-0 bg-surface-low hover:bg-[#B9892E] text-brand-navy dark:text-ink hover:text-white dark:hover:text-white"
                         >
                             <span>Buka Doa</span>
-                            <span aria-hidden="true">&rarr;</span>
                         </a>
                     </div>
                 </article>
@@ -255,17 +281,15 @@
 
                 <div class="flex flex-wrap items-center gap-1.5">
                     @if ($categories->onFirstPage())
-                        <span class="inline-flex items-center gap-1 min-h-[36px] px-4 py-1.5 rounded-full border border-line/60 text-body-sm text-ink-muted/60 cursor-not-allowed">
-                            <span aria-hidden="true">&lsaquo;</span>
+                        <span class="inline-flex items-center justify-center min-h-[36px] px-4 py-1.5 rounded-full border border-line/60 text-body-sm text-ink-muted/60 cursor-not-allowed">
                             <span>Sebelumnya</span>
                         </span>
                     @else
                         <a
                             href="{{ $categories->previousPageUrl() }}"
                             wire:navigate
-                            class="inline-flex items-center gap-1 min-h-[36px] px-4 py-1.5 rounded-full border border-line bg-surface-card text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center min-h-[36px] px-4 py-1.5 rounded-full border border-line bg-surface-card text-body-sm font-semibold text-ink hover:border-brand-teal transition"
                         >
-                            <span aria-hidden="true">&lsaquo;</span>
                             <span>Sebelumnya</span>
                         </a>
                     @endif
@@ -279,7 +303,7 @@
                             <a
                                 href="{{ $categories->url($page) }}"
                                 wire:navigate
-                                class="inline-flex items-center justify-center w-8 h-8 rounded-full text-ink hover:bg-surface-low text-body-sm font-semibold transition"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-full text-ink hover:bg-[#B9892E] hover:text-white text-body-sm font-semibold transition"
                             >
                                 {{ $page }}
                             </a>
@@ -290,15 +314,13 @@
                         <a
                             href="{{ $categories->nextPageUrl() }}"
                             wire:navigate
-                            class="inline-flex items-center gap-1 min-h-[36px] px-4 py-1.5 rounded-full border border-line bg-surface-card text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center min-h-[36px] px-4 py-1.5 rounded-full border border-line bg-surface-card text-body-sm font-semibold text-ink hover:border-brand-teal transition"
                         >
                             <span>Selanjutnya</span>
-                            <span aria-hidden="true">&rsaquo;</span>
                         </a>
                     @else
-                        <span class="inline-flex items-center gap-1 min-h-[36px] px-4 py-1.5 rounded-full border border-line/60 text-body-sm text-ink-muted/60 cursor-not-allowed">
+                        <span class="inline-flex items-center justify-center min-h-[36px] px-4 py-1.5 rounded-full border border-line/60 text-body-sm text-ink-muted/60 cursor-not-allowed">
                             <span>Selanjutnya</span>
-                            <span aria-hidden="true">&rsaquo;</span>
                         </span>
                     @endif
                 </div>

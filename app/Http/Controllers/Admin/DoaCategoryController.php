@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AdminDoaCategoryRequest;
 use App\Models\Doa;
 use App\Models\DoaCategory;
 use App\Models\Surah;
@@ -16,12 +15,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
-class AdminDoaCategoryController extends Controller
+class DoaCategoryController extends Controller
 {
+    /**
+     * Tampilkan daftar kategori doa untuk Super Admin.
+     */
     public function index(Request $request): View
     {
         $query = DoaCategory::query()->withCount('doas');
 
+        // Filter Pencarian (nama, slug, deskripsi, atau urutan)
         if ($search = trim((string) $request->input('q', ''))) {
             $query->where(function ($q) use ($search) {
                 if (is_numeric($search)) {
@@ -35,7 +38,8 @@ class AdminDoaCategoryController extends Controller
             });
         }
 
-        $categories = $query->orderBy('urutan', 'asc')->paginate(7)->withQueryString();
+        // 10 kategori per halaman sesuai standar Surah & Ayat
+        $categories = $query->orderBy('urutan', 'asc')->paginate(10)->withQueryString();
 
         $totalCategories = DoaCategory::count();
         $totalDoas = Doa::count();
@@ -55,9 +59,20 @@ class AdminDoaCategoryController extends Controller
         ]);
     }
 
-    public function store(AdminDoaCategoryRequest $request): RedirectResponse
+    /**
+     * Tambah kategori doa baru ke database.
+     */
+    public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:100'],
+            'deskripsi' => ['nullable', 'string', 'max:255'],
+            'urutan' => ['nullable', 'integer', 'min:1'],
+        ], [
+            'nama.required' => 'Nama kategori doa wajib diisi.',
+            'nama.max' => 'Nama kategori maksimal 100 karakter.',
+            'deskripsi.max' => 'Deskripsi maksimal 255 karakter.',
+        ]);
 
         $baseSlug = Str::slug($validated['nama']);
         $slug = $baseSlug;
@@ -79,9 +94,21 @@ class AdminDoaCategoryController extends Controller
             ->with('success', "Kategori '{$category->nama}' berhasil ditambahkan.");
     }
 
-    public function update(AdminDoaCategoryRequest $request, DoaCategory $kategoriDoa): RedirectResponse
+    /**
+     * Perbarui data kategori doa.
+     */
+    public function update(Request $request, DoaCategory $kategoriDoa): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:100'],
+            'deskripsi' => ['nullable', 'string', 'max:255'],
+            'urutan' => ['required', 'integer', 'min:1'],
+        ], [
+            'nama.required' => 'Nama kategori doa wajib diisi.',
+            'nama.max' => 'Nama kategori maksimal 100 karakter.',
+            'urutan.required' => 'Nomor urutan wajib diisi.',
+            'deskripsi.max' => 'Deskripsi maksimal 255 karakter.',
+        ]);
 
         if ($validated['nama'] !== $kategoriDoa->nama) {
             $baseSlug = Str::slug($validated['nama']);
@@ -94,10 +121,6 @@ class AdminDoaCategoryController extends Controller
             $validated['slug'] = $slug;
         }
 
-        if (empty($validated['urutan'])) {
-            $validated['urutan'] = $kategoriDoa->urutan;
-        }
-
         $kategoriDoa->update($validated);
 
         return redirect()
@@ -105,6 +128,9 @@ class AdminDoaCategoryController extends Controller
             ->with('success', "Kategori '{$kategoriDoa->nama}' berhasil diperbarui.");
     }
 
+    /**
+     * Hapus kategori doa.
+     */
     public function destroy(DoaCategory $kategoriDoa): RedirectResponse
     {
         $doasCount = $kategoriDoa->doas()->count();
@@ -123,6 +149,9 @@ class AdminDoaCategoryController extends Controller
             ->with('success', "Kategori '{$nama}' berhasil dihapus.");
     }
 
+    /**
+     * Simpan urutan susunan kategori (Drag & Drop / Reorder).
+     */
     public function reorder(Request $request): JsonResponse
     {
         $orders = $request->input('orders', []);

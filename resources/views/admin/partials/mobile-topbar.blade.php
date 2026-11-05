@@ -1,5 +1,5 @@
 {{-- Mobile Top Bar --}}
-<div class="lg:hidden flex items-center justify-between bg-[#0B2239] text-white px-4 py-3 border-b border-white/10">
+<div class="lg:hidden sticky top-0 z-40 flex items-center justify-between bg-[#0B2239] text-white px-4 py-3 border-b border-white/10 shadow-xs">
     {{-- Profile Super Admin (Sebelah Kiri) --}}
     <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-full bg-[#1C5868] border border-[#4AB3BF]/40 flex items-center justify-center text-xs font-bold text-white shrink-0">
@@ -11,17 +11,8 @@
         </div>
     </div>
 
-    {{-- Logo Lentera Quran (Sebelah Kanan) & Menu Button --}}
-    <div class="flex items-center gap-3">
-        <a href="{{ route('beranda') }}" wire:navigate wire:navigate.hover class="flex items-center" title="Lentera Quran — Kembali ke Beranda">
-            <div class="rounded-[8px] bg-[#FAF6EC] px-2 py-1 flex items-center justify-center shadow-xs">
-                <img
-                    src="{{ asset('images/logo-lentera-quran.png') }}"
-                    alt="Lentera Quran"
-                    class="h-6 w-auto object-contain"
-                >
-            </div>
-        </a>
+    {{-- Menu Button (Sebelah Kanan) --}}
+    <div class="flex items-center">
         <button
             type="button"
             @click="sidebarOpen = !sidebarOpen"

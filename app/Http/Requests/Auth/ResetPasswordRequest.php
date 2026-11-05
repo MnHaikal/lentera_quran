@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Auth\Concerns\NormalizesEmail;
@@ -32,12 +34,12 @@ class ResetPasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'token.required' => 'Token reset kata sandi tidak valid atau telah kedaluwarsa.',
+            'token.required' => 'Token pengaturan ulang kata sandi tidak valid atau tidak ditemukan.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'password.required' => 'Kata sandi baru wajib diisi.',
-            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+            'password.min' => 'Kata sandi baru minimal harus 8 karakter.',
         ];
     }
 }
-

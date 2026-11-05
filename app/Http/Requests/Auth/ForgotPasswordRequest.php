@@ -28,6 +28,7 @@ class ForgotPasswordRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:150',
+                'exists:users,email',
             ],
         ];
     }
@@ -38,6 +39,7 @@ class ForgotPasswordRequest extends FormRequest
             'email.required' => 'Alamat email wajib diisi.',
             'email.email' => 'Format alamat email tidak valid (contoh: nama@email.com).',
             'email.max' => 'Alamat email tidak boleh lebih dari 150 karakter.',
+            'email.exists' => 'Alamat email belum terdaftar dalam sistem.',
         ];
     }
 }

@@ -1,6 +1,27 @@
 {{-- Row 3: Total Pengguna Aktif Area Line Chart --}}
 <section
     id="pengguna-aktif"
+    x-data="{
+        activeRange: '7d',
+        activePoint: @js($chartData['datasets']['7d']['activePoint'] ?? ['x' => 820, 'y' => 70, 'info' => '']),
+        defaults: {
+            '7d': @js($chartData['datasets']['7d']['activePoint'] ?? ['x' => 820, 'y' => 70, 'info' => '']),
+            '30d': @js($chartData['datasets']['30d']['activePoint'] ?? ['x' => 820, 'y' => 70, 'info' => '']),
+            '12m': @js($chartData['datasets']['12m']['activePoint'] ?? ['x' => 820, 'y' => 70, 'info' => '']),
+        },
+        setRange(r) {
+            this.activeRange = r;
+            if (this.defaults[r]) {
+                this.activePoint = this.defaults[r];
+            }
+        },
+        tooltipX(x) {
+            return Math.max(10, Math.min(880 - 248 - 10, x - 124));
+        },
+        tooltipY(y) {
+            return Math.max(6, y - 48);
+        }
+    }"
     :class="darkPreview ? 'bg-[#0F2440] border-white/10' : 'bg-white border-[#EAE3D2]'"
     class="bg-white rounded-2xl border border-[#EAE3D2] p-5 sm:p-6 shadow-sm space-y-4"
 >
@@ -12,13 +33,13 @@
             </h2>
             <div class="flex flex-wrap items-center gap-3 mt-1">
                 <p :class="darkPreview ? 'text-white' : 'text-[#0F2D4F]'" class="text-2xl sm:text-[30px] font-extrabold text-[#0F2D4F] tracking-tight leading-none">
-                    48.290
+                    {{ number_format($userCount ?? 0, 0, ',', '.') }}
                 </p>
                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#E1F1F1] text-[#1B6B73] text-xs font-bold">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
                     </svg>
-                    <span>+12,4% bln ini</span>
+                    <span>+{{ $usersThisMonth ?? 0 }} bln ini</span>
                 </span>
             </div>
         </div>
@@ -30,25 +51,25 @@
         >
             <button
                 type="button"
-                @click="activeRange = '7d'"
+                @click="setRange('7d')"
                 :class="activeRange === '7d' ? 'bg-[#0F2D4F] text-white font-bold shadow-sm' : 'text-[#5B6B7A] font-semibold hover:text-[#0F2D4F]'"
-                class="px-4 py-1.5 rounded-full text-xs text-[#5B6B7A] font-semibold transition"
+                class="px-4 py-1.5 rounded-full text-xs font-semibold transition"
             >
                 7 Hari
             </button>
             <button
                 type="button"
-                @click="activeRange = '30d'"
+                @click="setRange('30d')"
                 :class="activeRange === '30d' ? 'bg-[#0F2D4F] text-white font-bold shadow-sm' : 'text-[#5B6B7A] font-semibold hover:text-[#0F2D4F]'"
-                class="px-4 py-1.5 rounded-full bg-[#0F2D4F] text-white font-bold shadow-sm text-xs transition"
+                class="px-4 py-1.5 rounded-full text-xs font-semibold transition"
             >
                 30 Hari
             </button>
             <button
                 type="button"
-                @click="activeRange = '12m'"
+                @click="setRange('12m')"
                 :class="activeRange === '12m' ? 'bg-[#0F2D4F] text-white font-bold shadow-sm' : 'text-[#5B6B7A] font-semibold hover:text-[#0F2D4F]'"
-                class="px-4 py-1.5 rounded-full text-xs text-[#5B6B7A] font-semibold transition"
+                class="px-4 py-1.5 rounded-full text-xs font-semibold transition"
             >
                 12 Bulan
             </button>
@@ -58,7 +79,7 @@
     {{-- SVG Smooth Area Line Chart --}}
     <div class="w-full overflow-x-auto">
         <div class="min-w-[680px]">
-            <svg viewBox="0 0 880 260" class="w-full h-auto overflow-visible" role="img" aria-label="Grafik Total Pengguna Aktif Bulan Mei">
+            <svg viewBox="0 0 880 260" class="w-full h-auto overflow-visible select-none" role="img" aria-label="Grafik Total Pengguna Aktif">
                 <defs>
                     <linearGradient id="activeUsersAreaGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="#1D6D75" stop-opacity="0.24" />
@@ -70,107 +91,151 @@
                     </filter>
                 </defs>
 
-                {{-- Horizontal Grid Lines & Y-Axis Labels (50k down to 0) --}}
-                <g class="text-[11px] fill-[#8C98A4] font-medium">
-                    <text x="34" y="34" text-anchor="end">50k</text>
+                {{-- Horizontal Grid Lines & Y-Axis Labels --}}
+                <g class="text-[11px] fill-[#8C98A4] font-medium pointer-events-none">
+                    <text x="34" y="34" text-anchor="end">{{ $chartData['yLabels'][0] ?? '5' }}</text>
                     <line x1="52" y1="30" x2="840" y2="30" stroke="#EFECE2" stroke-width="1" stroke-dasharray="3 3" />
 
-                    <text x="34" y="74" text-anchor="end">40k</text>
+                    <text x="34" y="74" text-anchor="end">{{ $chartData['yLabels'][1] ?? '4' }}</text>
                     <line x1="52" y1="70" x2="840" y2="70" stroke="#EFECE2" stroke-width="1" stroke-dasharray="3 3" />
 
-                    <text x="34" y="114" text-anchor="end">30k</text>
+                    <text x="34" y="114" text-anchor="end">{{ $chartData['yLabels'][2] ?? '3' }}</text>
                     <line x1="52" y1="110" x2="840" y2="110" stroke="#EFECE2" stroke-width="1" stroke-dasharray="3 3" />
 
-                    <text x="34" y="154" text-anchor="end">20k</text>
+                    <text x="34" y="154" text-anchor="end">{{ $chartData['yLabels'][3] ?? '2' }}</text>
                     <line x1="52" y1="150" x2="840" y2="150" stroke="#EFECE2" stroke-width="1" stroke-dasharray="3 3" />
 
-                    <text x="34" y="194" text-anchor="end">10k</text>
+                    <text x="34" y="194" text-anchor="end">{{ $chartData['yLabels'][4] ?? '1' }}</text>
                     <line x1="52" y1="190" x2="840" y2="190" stroke="#EFECE2" stroke-width="1" stroke-dasharray="3 3" />
 
-                    <text x="34" y="234" text-anchor="end">0</text>
+                    <text x="34" y="234" text-anchor="end">{{ $chartData['yLabels'][5] ?? '0' }}</text>
                     <line x1="52" y1="230" x2="840" y2="230" stroke="#E5DEC9" stroke-width="1" />
                 </g>
 
-                {{-- Shaded Area Under Curve --}}
-                <path
-                    d="M 60 190
-                       C 98 183, 110 179, 136 175
-                       C 168 170, 184 168, 212 162
-                       C 244 154, 260 144, 288 137
-                       C 318 129, 338 125, 364 124
-                       C 392 123, 412 126, 440 123
-                       C 472 120, 490 103, 516 95
-                       C 546 86, 566 83, 592 79
-                       C 622 74, 644 61, 668 57
-                       C 694 54, 718 62, 744 63
-                       C 772 64, 796 61, 820 59
-                       L 820 230 L 60 230 Z"
-                    fill="url(#activeUsersAreaGrad)"
+                {{-- Dynamic Datasets (7d, 30d, 12m) --}}
+                @foreach(['7d', '30d', '12m'] as $rangeKey)
+                    @php
+                        $dataset = $chartData['datasets'][$rangeKey] ?? null;
+                    @endphp
+                    @if($dataset)
+                        <g x-show="activeRange === '{{ $rangeKey }}'" style="{{ $rangeKey === '7d' ? '' : 'display: none;' }}">
+                            {{-- Shaded Area Under Curve --}}
+                            <path
+                                d="{{ $dataset['paths']['area'] }}"
+                                fill="url(#activeUsersAreaGrad)"
+                                class="pointer-events-none"
+                            />
+
+                            {{-- Main Smooth Teal Curve Line --}}
+                            <path
+                                d="{{ $dataset['paths']['line'] }}"
+                                fill="none"
+                                stroke="#1D6D75"
+                                stroke-width="2.6"
+                                stroke-linecap="round"
+                                class="pointer-events-none"
+                            />
+
+                            {{-- Data Nodes (Hollow Teal Circles) --}}
+                            <g fill="#FFFFFF" stroke="#1D6D75" stroke-width="2" class="pointer-events-none">
+                                @foreach($dataset['points'] as $pt)
+                                    <circle cx="{{ $pt['x'] }}" cy="{{ $pt['y'] }}" r="3.8" />
+                                @endforeach
+                            </g>
+
+                            {{-- X-Axis Date Labels with Active Highlight --}}
+                            <g class="text-[11px] font-medium" text-anchor="middle">
+                                @foreach($dataset['points'] as $pt)
+                                    <text
+                                        x="{{ $pt['x'] }}"
+                                        y="254"
+                                        :fill="Math.abs(activePoint.x - {{ $pt['x'] }}) < 2 ? '#1B6B73' : '#8C98A4'"
+                                        :font-weight="Math.abs(activePoint.x - {{ $pt['x'] }}) < 2 ? '700' : '500'"
+                                        class="transition-colors duration-150 cursor-pointer"
+                                        @mouseenter="activePoint = { x: {{ $pt['x'] }}, y: {{ $pt['y'] }}, info: '{{ addslashes($pt['info']) }}' }"
+                                    >{{ $pt['label'] }}</text>
+                                @endforeach
+                            </g>
+
+                            {{-- Invisible Interactive Hitboxes over each point --}}
+                            <g>
+                                @foreach($dataset['points'] as $pt)
+                                    <circle
+                                        cx="{{ $pt['x'] }}"
+                                        cy="{{ $pt['y'] }}"
+                                        r="24"
+                                        fill="transparent"
+                                        class="cursor-pointer"
+                                        @mouseenter="activePoint = { x: {{ $pt['x'] }}, y: {{ $pt['y'] }}, info: '{{ addslashes($pt['info']) }}' }"
+                                        @mousemove="activePoint = { x: {{ $pt['x'] }}, y: {{ $pt['y'] }}, info: '{{ addslashes($pt['info']) }}' }"
+                                    />
+                                @endforeach
+                            </g>
+                        </g>
+                    @endif
+                @endforeach
+
+                {{-- Vertical Dashed Drop-Line from Highlighted Point --}}
+                <line
+                    :x1="activePoint.x"
+                    :y1="activePoint.y"
+                    :x2="activePoint.x"
+                    y2="230"
+                    stroke="#7A9A9E"
+                    stroke-width="1.2"
+                    stroke-dasharray="4 4"
+                    class="pointer-events-none transition-all duration-150 ease-out"
                 />
 
-                {{-- Vertical Dashed Drop-Line from Highlighted Peak Point --}}
-                <line x1="668" y1="57" x2="668" y2="230" stroke="#7A9A9E" stroke-width="1.2" stroke-dasharray="4 4" />
-
-                {{-- Main Smooth Teal Curve Line --}}
-                <path
-                    d="M 60 190
-                       C 98 183, 110 179, 136 175
-                       C 168 170, 184 168, 212 162
-                       C 244 154, 260 144, 288 137
-                       C 318 129, 338 125, 364 124
-                       C 392 123, 412 126, 440 123
-                       C 472 120, 490 103, 516 95
-                       C 546 86, 566 83, 592 79
-                       C 622 74, 644 61, 668 57
-                       C 694 54, 718 62, 744 63
-                       C 772 64, 796 61, 820 59"
-                    fill="none"
-                    stroke="#1D6D75"
-                    stroke-width="2.6"
-                    stroke-linecap="round"
+                {{-- Highlighted Gold Active Node --}}
+                <circle
+                    :cx="activePoint.x"
+                    :cy="activePoint.y"
+                    r="7.5"
+                    fill="#E2B14C"
+                    fill-opacity="0.25"
+                    class="pointer-events-none transition-all duration-150 ease-out"
+                />
+                <circle
+                    :cx="activePoint.x"
+                    :cy="activePoint.y"
+                    r="4.2"
+                    fill="#E2B14C"
+                    stroke="#FFFFFF"
+                    stroke-width="2"
+                    class="pointer-events-none transition-all duration-150 ease-out"
                 />
 
-                {{-- Data Nodes (Hollow Teal Circles) --}}
-                <g fill="#FFFFFF" stroke="#1D6D75" stroke-width="2">
-                    <circle cx="60" cy="190" r="3.8" />
-                    <circle cx="136" cy="175" r="3.8" />
-                    <circle cx="212" cy="162" r="3.8" />
-                    <circle cx="288" cy="137" r="3.8" />
-                    <circle cx="364" cy="124" r="3.8" />
-                    <circle cx="440" cy="123" r="3.8" />
-                    <circle cx="516" cy="95" r="3.8" />
-                    <circle cx="592" cy="79" r="3.8" />
-                    <circle cx="744" cy="63" r="3.8" />
-                    <circle cx="820" cy="59" r="3.8" />
-                </g>
-
-                {{-- Highlighted Gold Peak Node --}}
-                <circle cx="668" cy="57" r="7.5" fill="#E2B14C" fill-opacity="0.25" />
-                <circle cx="668" cy="57" r="4.2" fill="#E2B14C" stroke="#FFFFFF" stroke-width="2" />
-
-                {{-- Floating Dark Navy Tooltip Pill --}}
-                <g filter="url(#tooltipShadow)">
-                    <rect x="536" y="6" width="248" height="32" rx="8" fill="#0B2239" />
-                    <polygon points="662,38 674,38 668,45" fill="#0B2239" />
-                    <circle cx="552" cy="22" r="3.5" fill="#E2B14C" />
-                    <text x="563" y="26" fill="#FFFFFF" font-size="11" font-weight="700">
-                        15 Mei 2025 — 43.120 pengguna aktif
+                {{-- Floating Dark Navy Tooltip Pill (Dynamically following hovered point) --}}
+                <g filter="url(#tooltipShadow)" class="pointer-events-none transition-all duration-150 ease-out">
+                    <rect
+                        :x="tooltipX(activePoint.x)"
+                        :y="tooltipY(activePoint.y)"
+                        width="248"
+                        height="32"
+                        rx="8"
+                        fill="#0B2239"
+                    />
+                    <polygon
+                        :points="`${activePoint.x - 6},${tooltipY(activePoint.y) + 32} ${activePoint.x + 6},${tooltipY(activePoint.y) + 32} ${activePoint.x},${tooltipY(activePoint.y) + 39}`"
+                        fill="#0B2239"
+                    />
+                    <circle
+                        :cx="tooltipX(activePoint.x) + 16"
+                        :cy="tooltipY(activePoint.y) + 16"
+                        r="3.5"
+                        fill="#E2B14C"
+                    />
+                    <text
+                        :x="tooltipX(activePoint.x) + 27"
+                        :y="tooltipY(activePoint.y) + 20"
+                        fill="#FFFFFF"
+                        font-size="11"
+                        font-weight="700"
+                        x-text="activePoint.info"
+                    >
+                        {{ $chartData['datasets']['7d']['activePoint']['info'] ?? '' }}
                     </text>
-                </g>
-
-                {{-- X-Axis Date Labels --}}
-                <g class="text-[11px] fill-[#8C98A4] font-medium" text-anchor="middle">
-                    <text x="60" y="254">1 Mei</text>
-                    <text x="136" y="254">4 Mei</text>
-                    <text x="212" y="254">7 Mei</text>
-                    <text x="288" y="254">10 Mei</text>
-                    <text x="364" y="254">13 Mei</text>
-                    <text x="440" y="254" fill="#1B6B73" font-weight="700">15 Mei</text>
-                    <text x="516" y="254">19 Mei</text>
-                    <text x="592" y="254">22 Mei</text>
-                    <text x="668" y="254">25 Mei</text>
-                    <text x="744" y="254">28 Mei</text>
-                    <text x="820" y="254">31 Mei</text>
                 </g>
             </svg>
         </div>

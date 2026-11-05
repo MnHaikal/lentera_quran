@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminDoaCategoryController;
-use App\Http\Controllers\Admin\AdminDoaController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DoaCategoryController as AdminDoaCategoryController;
+use App\Http\Controllers\Admin\DoaController as AdminDoaController;
 use App\Http\Controllers\Admin\AdminSurahController;
-use App\Http\Controllers\Admin\AdminTahlilController;
-use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\TahlilController as AdminTahlilController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\DoaController;
 use App\Http\Controllers\HomeController;
@@ -22,6 +22,7 @@ Route::get('/al-quran', [QuranController::class, 'index'])->name('quran.index');
 Route::get('/al-quran/juz-amma', [QuranController::class, 'juzAmma'])->name('quran.juz-amma');
 Route::get('/al-quran/{surah}', [QuranController::class, 'show'])->whereNumber('surah')->name('quran.show');
 Route::get('/api/audio/track', [QuranController::class, 'audioTrack'])->name('quran.audio-track');
+Route::post('/api/audio/track-stream', [QuranController::class, 'recordStreamPing'])->name('quran.audio-stream-ping');
 
 Route::get('/tahlil', [TahlilController::class, 'index'])->name('tahlil.index');
 Route::get('/tahlil/{urutan}', [TahlilController::class, 'show'])->whereNumber('urutan')->name('tahlil.show');
@@ -101,7 +102,7 @@ Route::middleware(['auth', 'auth.session', 'admin'])->group(function () {
         Route::put('/admin/pengguna/{user:id}', [AdminUserController::class, 'update'])->name('admin.pengguna.update');
         Route::delete('/admin/pengguna/{user:id}', [AdminUserController::class, 'destroy'])->name('admin.pengguna.destroy');
 
-        Route::get('/admin/users', fn () => redirect()->route('admin.pengguna.index'))->name('admin.users.index');
+        Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
         Route::post('/admin/users', [AdminUserController::class, 'store'])->name('admin.users.store');
         Route::put('/admin/users/{user:id}', [AdminUserController::class, 'update'])->name('admin.users.update');
         Route::delete('/admin/users/{user:id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');

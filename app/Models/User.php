@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Role;
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -62,6 +63,11 @@ class User extends Authenticatable
         return $this->hasOne(UserSetting::class);
     }
 
+    public function murottalStreamLogs(): HasMany
+    {
+        return $this->hasMany(MurottalStreamLog::class);
+    }
+
     public function userSetting(): HasOne
     {
         return $this->settings();
@@ -75,5 +81,16 @@ class User extends Authenticatable
     public function lastRead(): HasOne
     {
         return $this->hasOne(LastRead::class);
+    }
+
+    /**
+     * Kirim notifikasi reset kata sandi dengan template khusus Lentera Quran.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

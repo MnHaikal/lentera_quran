@@ -16,48 +16,31 @@ function formatTime(seconds) {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
-function resolveEffectiveDark(preference) {
-    if (preference === 'gelap') {
-        return true;
-    }
-
-    if (preference === 'terang') {
-        return false;
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+function resolveEffectiveDark() {
+    return false;
 }
 
-function applyThemePreference(preference) {
-    const isDark = resolveEffectiveDark(preference);
-    document.documentElement.classList.toggle('dark', isDark);
-    document.documentElement.dataset.themePreference = preference;
+function applyThemePreference() {
+    document.documentElement.classList.remove('dark');
+    try {
+        localStorage.removeItem(THEME_STORAGE_KEY);
+    } catch (e) {}
 }
 
 function getStoredThemePreference() {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-
-    if (stored === 'terang' || stored === 'gelap' || stored === 'sistem') {
-        return stored;
-    }
-
-    return 'sistem';
+    return 'terang';
 }
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.store('theme', {
-        current: getStoredThemePreference(),
+        current: 'terang',
 
-        set(preference) {
-            this.current = preference;
-            localStorage.setItem(THEME_STORAGE_KEY, preference);
-            applyThemePreference(preference);
+        set() {
+            applyThemePreference();
         },
 
         cycle() {
-            const order = ['sistem', 'terang', 'gelap'];
-            const nextIndex = (order.indexOf(this.current) + 1) % order.length;
-            this.set(order[nextIndex]);
+            applyThemePreference();
         },
     });
 

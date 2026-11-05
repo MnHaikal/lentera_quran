@@ -1,7 +1,7 @@
 <x-app-layout title="Beranda" description="Beranda Lentera Quran — Al-Qur'an digital berbahasa Indonesia, bacaan tahlil, dan doa harian.">
     {{-- Hero Section (Full-Width Background Biru seperti Footer) --}}
-    <div class="bg-footer-bg text-footer-text border-b border-white/10 overflow-hidden">
-        <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-10 md:py-14">
+    <div class="bg-footer-bg text-footer-text border-b border-white/10 overflow-hidden flex items-center" style="min-height: calc(100vh - 80px);">
+        <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-12 md:py-16 w-full">
             <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 {{-- Left Column: Hero Copy & CTA --}}
                 <div class="lg:col-span-7 space-y-6">
@@ -219,18 +219,10 @@
 
         {{-- Daftar Mushaf (12 Surah Real dari Database) --}}
         <section class="space-y-6 pt-2">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div class="space-y-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-label-sm font-semibold">
-                        Daftar Mushaf
-                    </span>
-                    <h2 class="text-headline-lg text-ink">Mulai Perjalanan Cahayamu</h2>
-                    <p class="text-body-md text-ink-muted">
-                        Pilih surah untuk mulai membaca dengan teks Arab Utsmani, transliterasi, dan audio per ayat.
-                    </p>
-                </div>
-                <p class="text-body-sm text-ink-muted">
-                    Menampilkan <span class="font-semibold text-ink">1 - {{ $previewSurahs->count() ?: 12 }} dari {{ $totalSurahs }} Surah</span>
+            <div class="space-y-2">
+                <h2 class="text-headline-lg text-ink">Mulai Perjalanan Cahayamu</h2>
+                <p class="text-body-md text-ink-muted">
+                    Pilih surah untuk mulai membaca dengan teks Arab Utsmani, transliterasi, dan audio per ayat.
                 </p>
             </div>
 
@@ -271,9 +263,8 @@
             </div>
 
             <div class="flex justify-center pt-2">
-                <a href="{{ route('quran.index') }}" wire:navigate class="lq-btn-accent gap-2">
-                    <span>Lihat Semua Surah ({{ $totalSurahs }} Surah)</span>
-                    <span aria-hidden="true">&darr;</span>
+                <a href="{{ route('quran.index') }}" wire:navigate class="lq-btn-accent">
+                    <span>Lihat Semua Surah</span>
                 </a>
             </div>
         </section>
@@ -417,10 +408,9 @@
                                 <a
                                     href="{{ route('register') }}"
                                     wire:navigate
-                                    class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy font-bold text-body-md shadow-lg hover:shadow-xl transition-all duration-200 group text-center"
+                                    class="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-brand-gold hover:bg-brand-gold-hover text-brand-navy font-bold text-body-md shadow-lg hover:shadow-xl transition-all duration-200 text-center"
                                 >
                                     <span>Daftar Akun Gratis Sekarang</span>
-                                    <span class="group-hover:translate-x-1 transition-transform" aria-hidden="true">&rarr;</span>
                                 </a>
                             </div>
                         </div>
