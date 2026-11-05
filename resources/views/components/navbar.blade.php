@@ -114,42 +114,66 @@
                         type="button"
                         @click="accountMenuOpen = !accountMenuOpen"
                         @keydown.escape.window="accountMenuOpen = false"
-                        aria-label="Menu akun pengguna"
+                        aria-label="Menu akun {{ Auth::user()->name }}"
                         aria-haspopup="true"
                         :aria-expanded="accountMenuOpen"
-                        class="inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-full border border-line bg-surface-card text-ink text-body-sm font-semibold hover:border-brand-teal transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                        class="w-10 h-10 rounded-full bg-[#1C5868] border border-[#4AB3BF]/50 flex items-center justify-center text-xs font-bold text-white shadow-sm hover:ring-2 hover:ring-brand-gold/60 hover:opacity-95 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold shrink-0"
+                        title="{{ Auth::user()->name }}"
                     >
-                        <span class="max-w-[120px] truncate">{{ Auth::user()->name }}</span>
-                        <svg class="w-4 h-4 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
                     </button>
 
                     <div
                         x-show="accountMenuOpen"
                         @click.outside="accountMenuOpen = false"
-                        x-transition
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
                         style="display: none;"
-                        class="absolute right-0 mt-2 w-48 rounded-card bg-surface-card border border-line shadow-card py-1.5 z-50"
+                        class="absolute right-0 mt-2 w-56 rounded-2xl bg-surface-card border border-line shadow-card p-1.5 z-50 overflow-hidden"
                         role="menu"
                     >
+                        {{-- Info User (Nama & Email) --}}
+                        <div class="px-3.5 py-3 border-b border-line/70 mb-1">
+                            <p class="text-body-xs font-bold text-ink truncate leading-snug">
+                                {{ Auth::user()->name }}
+                            </p>
+                            @if (Auth::user()->email)
+                                <p class="text-[11px] text-ink-muted truncate mt-0.5">
+                                    {{ Auth::user()->email }}
+                                </p>
+                            @endif
+                        </div>
+
+                        {{-- Link ke Dashboard Admin jika User adalah Admin --}}
                         @if (Auth::user()->role?->isAdmin())
                             <a
                                 href="{{ route('admin.dashboard') }}"
                                 role="menuitem"
-                                class="w-full min-h-[44px] px-4 py-2 text-left text-body-sm font-semibold text-ink hover:bg-surface-container flex items-center transition focus:outline-none focus-visible:bg-surface-container"
+                                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-body-xs font-semibold text-ink hover:bg-surface-container hover:text-brand-navy transition focus:outline-none"
                             >
-                                Dashboard Admin
+                                <svg class="w-4 h-4 text-brand-teal shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                <span>Dashboard Admin</span>
                             </a>
                         @endif
-                        <form method="POST" action="{{ route('logout') }}">
+
+                        {{-- Tombol Keluar --}}
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <button
                                 type="submit"
                                 role="menuitem"
-                                class="w-full min-h-[44px] px-4 py-2 text-left text-body-sm font-semibold text-danger hover:bg-surface-container transition focus:outline-none focus-visible:bg-surface-container"
+                                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-body-xs font-semibold text-danger hover:bg-danger/10 hover:text-danger transition focus:outline-none focus:bg-danger/10"
                             >
-                                Keluar
+                                <svg class="w-4 h-4 text-danger shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                                </svg>
+                                <span>Keluar</span>
                             </button>
                         </form>
                     </div>
