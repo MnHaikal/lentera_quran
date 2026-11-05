@@ -83,12 +83,12 @@
     >
         {{-- Sticky Sub-Header / Toolbar Kontrol Bacaan (Persis Detail Surah & Detail Tahlil) --}}
         <div class="sticky top-20 z-30 bg-surface-card/95 backdrop-blur border-b border-line shadow-sm">
-            <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-2.5 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2.5">
+            <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                     <a
                         href="{{ route('doa.index') }}"
                         wire:navigate
-                        class="inline-flex items-center gap-2 rounded-full bg-surface-low hover:bg-brand-gold-pale/60 border border-line hover:border-brand-gold px-3.5 py-2 text-label-md font-semibold text-ink hover:text-brand-navy transition"
+                        class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-surface-low hover:bg-brand-gold-pale/60 border border-line hover:border-brand-gold px-3 sm:px-3.5 py-1.5 sm:py-2 text-label-sm sm:text-label-md font-semibold text-ink hover:text-brand-navy transition shrink-0"
                         title="Kembali ke Daftar Kategori Doa"
                     >
                         <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -97,26 +97,26 @@
                         <span>Kembali</span>
                     </a>
 
-                    <div class="inline-flex items-center gap-2 rounded-full bg-surface-low border border-line px-3.5 py-1.5">
+                    <div class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-surface-low hover:bg-surface-card border border-line hover:border-brand-teal px-3 sm:px-3.5 py-1.5 sm:py-2 text-label-sm sm:text-label-md font-semibold text-ink transition shadow-sm min-w-0 flex-1 sm:flex-initial sm:max-w-[340px]">
                         <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <label for="jump-doa-select" class="text-label-md text-ink-muted whitespace-nowrap">Lompat ke Doa:</label>
+                        <label for="jump-doa-select" class="text-ink-muted whitespace-nowrap shrink-0">Buka:</label>
                         <select
                             id="jump-doa-select"
                             @change="jumpToDoa($event.target.value)"
-                            class="bg-surface-card border border-line rounded-lg text-body-sm font-semibold text-ink py-1 pl-3 pr-7 focus:border-brand-teal focus:ring-0 max-w-[230px]"
+                            class="bg-transparent border-0 text-body-xs sm:text-body-sm font-semibold text-ink py-0 pl-0.5 pr-6 sm:pr-7 focus:ring-0 focus:outline-none cursor-pointer truncate w-full"
                         >
-                            @foreach ($doas as $index => $doaOption)
-                                <option value="{{ $doaOption->slug }}" @selected($doaOption->slug === $firstDoaSlug)>
-                                    {{ $index + 1 }}. {{ $doaOption->judul }}
+                            @foreach ($doas as $doaOption)
+                                <option class="bg-surface-card text-ink" value="{{ $doaOption->slug }}" @selected($doaOption->slug === $firstDoaSlug)>
+                                    {{ $doaOption->judul }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     {{-- Dropdown Pengaturan Bacaan (Font, Transliterasi, Terjemahan) --}}
                     <div x-data="{ settingsOpen: false }" class="relative">
                         <button
@@ -126,10 +126,10 @@
                             aria-label="Pengaturan Tampilan"
                             title="Pengaturan Tampilan Bacaan"
                             :aria-expanded="settingsOpen"
-                            class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-line bg-surface-low text-ink hover:text-brand-teal hover:border-brand-teal hover:bg-surface-card transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                            class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-line bg-surface-low text-ink hover:text-brand-teal hover:border-brand-teal hover:bg-surface-card transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold shrink-0"
                             :class="settingsOpen ? 'text-brand-teal border-brand-teal bg-surface-card ring-2 ring-brand-teal/20' : ''"
                         >
-                            <svg class="w-5 h-5 transition-transform duration-200" :class="settingsOpen ? 'rotate-45' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200" :class="settingsOpen ? 'rotate-45' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
@@ -145,7 +145,7 @@
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95"
                             style="display: none;"
-                            class="absolute right-0 mt-2.5 w-72 sm:w-80 rounded-2xl bg-surface-card border border-line shadow-xl p-5 z-50 space-y-4"
+                            class="absolute right-0 mt-2.5 w-[calc(100vw-2rem)] sm:w-80 max-w-sm rounded-2xl bg-surface-card border border-line shadow-xl p-5 z-50 space-y-4"
                         >
                             <div class="flex items-center justify-between pb-3 border-b border-line/60">
                                 <h3 class="text-title-sm font-bold text-ink">Pengaturan Tampilan</h3>
@@ -238,7 +238,7 @@
         </div>
 
         {{-- Kontainer Utama Mushaf (max-w-mushaf = 840px sesuai halaman Detail Surah) --}}
-        <div class="max-w-mushaf mx-auto px-gutter-mobile md:px-gutter py-8 md:py-10 space-y-6">
+        <div class="max-w-mushaf mx-auto px-gutter-mobile md:px-gutter py-6 md:py-10 space-y-6 pb-28 md:pb-12">
             {{-- Banner Header Kategori Doa (Deep Navy) --}}
             <section class="rounded-card bg-gradient-to-b from-[#0A223D] via-[#0F2D4F] to-[#0A223D] text-white px-6 py-8 sm:px-10 sm:py-10 shadow-lg border border-white/10 text-center space-y-6">
                 <div class="flex flex-wrap items-center justify-center gap-2.5">
@@ -411,28 +411,32 @@
             </section>
 
             {{-- Footer Navigasi Kategori Sebelumnya & Berikutnya --}}
-            <nav aria-label="Navigasi Kategori Doa" class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-body-sm text-ink-muted">
+            <nav aria-label="Navigasi Kategori Doa" class="pt-6 border-t border-line/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-body-sm text-ink-muted text-center sm:text-left sm:whitespace-nowrap leading-relaxed">
                     Menampilkan <strong class="font-semibold text-ink">1 - {{ $doas->count() }} Doa</strong> dalam kategori <strong class="font-semibold text-ink">{{ $category->nama }}</strong>
                 </p>
 
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center sm:justify-end gap-2.5 sm:gap-3 w-full sm:w-auto">
                     @if ($previousCategory)
                         <a
                             href="{{ route('doa.show', $previousCategory->slug) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition shadow-sm w-full sm:w-auto"
                         >
-                            <span aria-hidden="true">&larr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
                             <span>{{ $previousCategory->nama }}</span>
                         </a>
                     @else
                         <a
                             href="{{ route('doa.index') }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition shadow-sm w-full sm:w-auto"
                         >
-                            <span aria-hidden="true">&larr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
                             <span>Semua Kategori Doa</span>
                         </a>
                     @endif
@@ -441,19 +445,23 @@
                         <a
                             href="{{ route('doa.show', $nextCategory->slug) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:opacity-90 transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:bg-brand-navy transition shadow-sm w-full sm:w-auto"
                         >
                             <span>{{ $nextCategory->nama }}</span>
-                            <span aria-hidden="true">&rarr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
                         </a>
                     @else
                         <a
                             href="{{ route('doa.index') }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:opacity-90 transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:bg-brand-navy transition shadow-sm w-full sm:w-auto"
                         >
                             <span>Semua Kategori Doa</span>
-                            <span aria-hidden="true">&rarr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
                         </a>
                     @endif
                 </div>

@@ -62,16 +62,4 @@
             >
         </a>
     </div>
-            wire:navigate
-            wire:navigate.hover
-            class="flex items-center group focus:outline-none"
-            title="Lentera Quran — Kembali ke Beranda"
-        >
-            <img
-                src="{{ asset('images/logo-lentera-quran.png') }}"
-                alt="Lentera Quran"
-                class="h-9 sm:h-10 w-auto object-contain hover:opacity-90 transition"
-            >
-        </a>
-    </div>
 </header>

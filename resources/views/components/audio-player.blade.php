@@ -63,8 +63,8 @@
                 :title="$store.audioPlayer?.ayahNumber ? 'Ayat Sebelumnya' : 'Surah Sebelumnya'"
                 class="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy shrink-0"
             >
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 5v14M19 5l-9 7 9 7V5z" />
                 </svg>
             </button>
 
@@ -95,8 +95,8 @@
                 :title="$store.audioPlayer?.ayahNumber ? 'Ayat Berikutnya' : 'Surah Berikutnya'"
                 class="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy shrink-0"
             >
-                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 4.5l7.5 7.5-7.5 7.5m6-15l7.5 7.5-7.5 7.5" />
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 5v14M5 5l9 7-9 7V5z" />
                 </svg>
             </button>
         </div>

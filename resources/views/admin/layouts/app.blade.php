@@ -7,6 +7,11 @@
 
     <title>@yield('title', 'Super Admin Dashboard — Lentera Quran')</title>
 
+    {{-- Favicon --}}
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-icon-lentera-quran.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/logo-icon-lentera-quran.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo-icon-lentera-quran.png') }}">
+
     <script>
         document.documentElement.classList.remove('dark');
         try { localStorage.removeItem('lq_theme'); } catch (e) {}

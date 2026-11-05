@@ -6,7 +6,7 @@
         return str_replace($western, $eastern, (string) $number);
     };
 
-    $tempatTurunUpper = (($surah->tempat_turun instanceof \BackedEnum ? $surah->tempat_turun->value : $surah->tempat_turun) === 'mekah') ? 'MAKKIYYAH' : 'MADANIYYAH';
+    $tempatTurunUpper = $surah->tempat_turun === 'mekah' ? 'MAKKIYYAH' : 'MADANIYYAH';
     $showBasmalah = $surah->id !== 1 && $surah->id !== 9;
 @endphp
 
@@ -23,20 +23,6 @@
             copiedAyah: null,
             bookmarkedAyahs: @js($bookmarkedAyahIds),
             isSurahFavorited: @js($isSurahFavorited),
-            async shareAyah(ayahNumber, arab, translation) {
-                const shareData = {
-                    title: 'QS. {{ addslashes($surah->nama_latin) }}: ' + ayahNumber,
-                    text: 'QS. {{ addslashes($surah->nama_latin) }}: Ayat ' + ayahNumber + '\n\n' + arab + '\n\n"' + translation + '"\n\nBaca di Lentera Quran: ' + window.location.origin + '/al-quran/{{ $surah->id }}?ayat=' + ayahNumber,
-                    url: window.location.origin + '/al-quran/{{ $surah->id }}?ayat=' + ayahNumber
-                };
-                if (navigator.share) {
-                    try {
-                        await navigator.share(shareData);
-                    } catch (e) {}
-                } else {
-                    this.copyAyahText(ayahNumber, arab, translation);
-                }
-            },
             decreaseFont() {
                 this.fontSize = Math.max(24, this.fontSize - 2);
                 document.documentElement.style.setProperty('--quran-font-size', this.fontSize + 'px');
@@ -136,12 +122,12 @@
     >
         {{-- Sticky Sub-Header / Toolbar Kontrol Bacaan --}}
         <div class="sticky top-20 z-30 bg-surface-card/95 backdrop-blur border-b border-line shadow-sm">
-            <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-2.5 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2.5">
+            <div class="max-w-browse mx-auto px-gutter-mobile md:px-gutter py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
                     <a
                         href="{{ route('quran.index') }}"
                         wire:navigate
-                        class="inline-flex items-center gap-2 rounded-full bg-surface-low hover:bg-brand-gold-pale/60 border border-line hover:border-brand-gold px-3.5 py-2 text-label-md font-semibold text-ink hover:text-brand-navy transition"
+                        class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-surface-low hover:bg-brand-gold-pale/60 border border-line hover:border-brand-gold px-3 sm:px-3.5 py-1.5 sm:py-2 text-label-sm sm:text-label-md font-semibold text-ink hover:text-brand-navy transition shrink-0"
                         title="Kembali ke Daftar Surah"
                     >
                         <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -150,30 +136,30 @@
                         <span>Kembali</span>
                     </a>
 
-                    <div class="inline-flex items-center gap-2 rounded-full bg-surface-low border border-line px-3.5 py-1.5">
+                    <div class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full bg-surface-low hover:bg-surface-card border border-line hover:border-brand-teal px-3 sm:px-3.5 py-1.5 sm:py-2 text-label-sm sm:text-label-md font-semibold text-ink transition shadow-sm min-w-0">
                         <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <label for="jump-ayah-select" class="text-label-md text-ink-muted whitespace-nowrap">Lompat ke Ayat:</label>
+                        <label for="jump-ayah-select" class="text-ink-muted whitespace-nowrap shrink-0">Buka:</label>
                         <select
                             id="jump-ayah-select"
                             @change="jumpToAyah($event.target.value)"
-                            class="bg-surface-card border border-line rounded-lg text-body-sm font-semibold text-ink py-1 pl-3 pr-7 focus:border-brand-teal focus:ring-0"
+                            class="bg-transparent border-0 text-body-xs sm:text-body-sm font-semibold text-ink py-0 pl-0.5 pr-6 sm:pr-7 focus:ring-0 focus:outline-none cursor-pointer"
                         >
                             @for ($num = 1; $num <= $surah->jumlah_ayat; $num++)
-                                <option value="{{ $num }}" @selected(($targetAyahNumber ?? $ayahs->firstItem() ?? 1) === $num)>
+                                <option class="bg-surface-card text-ink" value="{{ $num }}" @selected(($targetAyahNumber ?? $ayahs->firstItem() ?? 1) === $num)>
                                     Ayat {{ $num }}
                                 </option>
                             @endfor
                         </select>
                     </div>
 
-                    <span class="hidden sm:inline-flex items-center px-3 py-1 rounded-full bg-brand-teal/15 text-brand-teal text-label-md font-semibold">
+                    <span class="hidden md:inline-flex items-center px-3 py-1 rounded-full bg-brand-teal/15 text-brand-teal text-label-md font-semibold shrink-0">
                         {{ $juzRangeLabel }}
                     </span>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     {{-- Dropdown Pengaturan Bacaan (Font, Transliterasi, Terjemahan) --}}
                     <div x-data="{ settingsOpen: false }" class="relative">
                         <button
@@ -183,10 +169,10 @@
                             aria-label="Pengaturan Tampilan"
                             title="Pengaturan Tampilan Bacaan"
                             :aria-expanded="settingsOpen"
-                            class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-line bg-surface-low text-ink hover:text-brand-teal hover:border-brand-teal hover:bg-surface-card transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                            class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-line bg-surface-low text-ink hover:text-brand-teal hover:border-brand-teal hover:bg-surface-card transition shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold shrink-0"
                             :class="settingsOpen ? 'text-brand-teal border-brand-teal bg-surface-card ring-2 ring-brand-teal/20' : ''"
                         >
-                            <svg class="w-5 h-5 transition-transform duration-200" :class="settingsOpen ? 'rotate-45' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200" :class="settingsOpen ? 'rotate-45' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
@@ -202,7 +188,7 @@
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95"
                             style="display: none;"
-                            class="absolute right-0 mt-2.5 w-72 sm:w-80 rounded-2xl bg-surface-card border border-line shadow-xl p-5 z-50 space-y-4"
+                            class="absolute right-0 mt-2.5 w-[calc(100vw-2rem)] sm:w-80 max-w-sm rounded-2xl bg-surface-card border border-line shadow-xl p-5 z-50 space-y-4"
                         >
                             <div class="flex items-center justify-between pb-3 border-b border-line/60">
                                 <h3 class="text-title-sm font-bold text-ink">Pengaturan Tampilan</h3>
@@ -305,7 +291,7 @@
         </div>
 
         {{-- Kontainer Utama Mushaf (max-w-mushaf = 840px sesuai DESIGN.md) --}}
-        <div class="max-w-mushaf mx-auto px-gutter-mobile md:px-gutter py-8 md:py-10 space-y-6">
+        <div class="max-w-mushaf mx-auto px-gutter-mobile md:px-gutter py-6 md:py-10 space-y-6 pb-28 md:pb-12">
             {{-- Banner Header Surah (Deep Navy) --}}
             <section class="rounded-card bg-gradient-to-b from-[#0A223D] via-[#0F2D4F] to-[#0A223D] text-white px-6 py-8 sm:px-10 sm:py-10 shadow-lg border border-white/10 text-center space-y-6">
                 <div class="flex flex-wrap items-center justify-center gap-2.5">
@@ -345,24 +331,20 @@
                                 ? 'bg-white ring-2 ring-brand-gold hover:bg-white/95'
                                 : 'bg-brand-gold hover:bg-brand-gold-hover'"
                         >
-                            <span x-show="!($store.audioPlayer?.isCurrentSurah({{ $surah->id }}) && !$store.audioPlayer?.ayahNumber && $store.audioPlayer?.isPlaying)">&#9654; Putar Surah Penuh</span>
-                            <span x-show="$store.audioPlayer?.isCurrentSurah({{ $surah->id }}) && !$store.audioPlayer?.ayahNumber && $store.audioPlayer?.isPlaying" style="display: none;">&#10074;&#10074; Jeda Surah Penuh</span>
+                            <span x-show="!($store.audioPlayer?.isCurrentSurah({{ $surah->id }}) && !$store.audioPlayer?.ayahNumber && $store.audioPlayer?.isPlaying)" class="inline-flex items-center gap-2">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                </svg>
+                                <span>Putar Surah Penuh</span>
+                            </span>
+                            <span x-show="$store.audioPlayer?.isCurrentSurah({{ $surah->id }}) && !$store.audioPlayer?.ayahNumber && $store.audioPlayer?.isPlaying" style="display: none;" class="inline-flex items-center gap-2">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.5 3.5A1.5 1.5 0 017 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5zm9 0A1.5 1.5 0 0116 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Jeda Surah Penuh</span>
+                            </span>
                         </button>
                     @endif
-
-                    <button
-                        type="button"
-                        @click="toggleSurahBookmark()"
-                        class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full border text-body-sm font-semibold transition"
-                        :class="isSurahBookmarked
-                            ? 'bg-brand-gold text-brand-navy border-brand-gold shadow-sm font-bold'
-                            : 'border-white/25 bg-white/5 text-white hover:bg-white/10'"
-                    >
-                        <svg class="w-4 h-4 shrink-0" :class="isSurahBookmarked ? 'fill-current' : 'fill-none'" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                        </svg>
-                        <span x-text="isSurahBookmarked ? 'Surah Tersimpan' : 'Simpan Surah'">Simpan Surah</span>
-                    </button>
 
                     @if ($surah->deskripsi)
                         <button
@@ -495,158 +477,98 @@
                         </div>
 
                         {{-- Footer Aksi Kartu Ayat --}}
-                        <div class="mt-6 pt-4 border-t border-line/60 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-2">
-                                @if ($ayah->audio_url)
-                                    <button
-                                        type="button"
-                                        @click="$store.audioPlayer.playTrack({ surahId: {{ $surah->id }}, surahName: '{{ addslashes($surah->nama_latin) }}', ayahNumber: {{ $ayah->nomor_ayat }}, totalAyat: {{ $surah->jumlah_ayat }}, src: '{{ $ayah->audio_url }}' })"
-                                        class="inline-flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-full text-label-md font-semibold transition"
-                                        :class="$store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying
-                                            ? 'bg-brand-navy text-white'
-                                            : 'bg-surface-low border border-line text-ink hover:border-brand-teal'"
-                                    >
-                                        <span x-show="!($store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying)">&#9654; Putar</span>
-                                        <span x-show="$store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying" style="display: none;">&#10074;&#10074; Jeda</span>
-                                    </button>
-                                @endif
-
-                                @guest
-                                    <a
-                                        href="{{ route('login') }}"
-                                        wire:navigate
-                                        aria-label="Masuk untuk menandai ayat {{ $ayah->nomor_ayat }}"
-                                        title="Masuk untuk menandai ayat"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold hover:bg-surface-low transition"
-                                    >
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                                        </svg>
-                                    </a>
-                                @else
-                                    <button
-                                        type="button"
-                                        @click="toggleBookmarkAyah({{ $ayah->id }})"
-                                        :aria-label="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'Hapus penanda ayat {{ $ayah->nomor_ayat }}' : 'Simpan penanda ayat {{ $ayah->nomor_ayat }}'"
-                                        :title="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'Hapus penanda ayat ini' : 'Tandai ayat ini'"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-full transition"
-                                        :class="bookmarkedAyahs.includes({{ $ayah->id }})
-                                            ? 'text-brand-gold bg-brand-gold/15'
-                                            : 'text-ink-muted hover:text-brand-gold hover:bg-surface-low'"
-                                    >
-                                        <svg
-                                            class="w-4 h-4"
-                                            :class="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'fill-current text-brand-gold' : 'fill-none'"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="1.8"
-                                            aria-hidden="true"
-                                        >
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                                        </svg>
-                                    </button>
-                                @endguest
-
+                        <div class="mt-6 pt-4 border-t border-line/60 flex items-center gap-2">
+                            @if ($ayah->audio_url)
                                 <button
                                     type="button"
-                                    @click="copyAyahText({{ $ayah->nomor_ayat }}, @js($ayah->teks_arab), @js($ayah->terjemahan))"
-                                    aria-label="Salin teks ayat {{ $ayah->nomor_ayat }}"
-                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-teal hover:bg-surface-low transition"
+                                    @click="$store.audioPlayer.playTrack({ surahId: {{ $surah->id }}, surahName: '{{ addslashes($surah->nama_latin) }}', ayahNumber: {{ $ayah->nomor_ayat }}, totalAyat: {{ $surah->jumlah_ayat }}, src: '{{ $ayah->audio_url }}' })"
+                                    class="inline-flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-full text-label-md font-semibold transition"
+                                    :class="$store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying
+                                        ? 'bg-brand-navy text-white'
+                                        : 'bg-surface-low border border-line text-ink hover:border-brand-teal'"
                                 >
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
-                                    </svg>
+                                    <span x-show="!($store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying)" class="inline-flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                        </svg>
+                                        <span>Putar</span>
+                                    </span>
+                                    <span x-show="$store.audioPlayer && $store.audioPlayer.isCurrentAyah({{ $surah->id }}, {{ $ayah->nomor_ayat }}) && $store.audioPlayer.isPlaying" style="display: none;" class="inline-flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M5.5 3.5A1.5 1.5 0 017 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5zm9 0A1.5 1.5 0 0116 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Jeda</span>
+                                    </span>
                                 </button>
+                            @endif
 
-                                <button
-                                    type="button"
-                                    @click="shareAyah({{ $ayah->nomor_ayat }}, @js($ayah->teks_arab), @js($ayah->terjemahan))"
-                                    aria-label="Bagikan ayat {{ $ayah->nomor_ayat }}"
+                            @guest
+                                <a
+                                    href="{{ route('login') }}"
+                                    wire:navigate
+                                    aria-label="Masuk untuk menandai ayat {{ $ayah->nomor_ayat }}"
+                                    title="Masuk untuk menandai ayat"
                                     class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold hover:bg-surface-low transition"
                                 >
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                    </svg>
+                                </a>
+                            @else
+                                <button
+                                    type="button"
+                                    @click="toggleBookmarkAyah({{ $ayah->id }})"
+                                    :aria-label="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'Hapus penanda ayat {{ $ayah->nomor_ayat }}' : 'Simpan penanda ayat {{ $ayah->nomor_ayat }}'"
+                                    :title="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'Hapus penanda ayat ini' : 'Tandai ayat ini'"
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-full transition"
+                                    :class="bookmarkedAyahs.includes({{ $ayah->id }})
+                                        ? 'text-brand-gold bg-brand-gold/15'
+                                        : 'text-ink-muted hover:text-brand-gold hover:bg-surface-low'"
+                                >
+                                    <svg
+                                        class="w-4 h-4"
+                                        :class="bookmarkedAyahs.includes({{ $ayah->id }}) ? 'fill-current text-brand-gold' : 'fill-none'"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        aria-hidden="true"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                                     </svg>
                                 </button>
-
-                                <span
-                                    x-show="copiedAyah === {{ $ayah->nomor_ayat }}"
-                                    x-transition
-                                    style="display: none;"
-                                    class="text-label-sm font-semibold text-brand-teal"
-                                >
-                                    Tersalin!
-                                </span>
-                            </div>
-
-                            <a
-                                href="#ayat-{{ $ayah->nomor_ayat }}"
-                                class="inline-flex items-center gap-1 text-body-sm font-semibold text-brand-teal hover:underline"
-                            >
-                                <span>Tafsir Tahlili</span>
-                                <span aria-hidden="true">&rarr;</span>
-                            </a>
+                            @endguest
                         </div>
                     </article>
                 @endforeach
             </section>
 
-            {{-- Banner Ayat Terpilih (Ayat Kursi pada Surah Al-Baqarah) --}}
-            @if ($featuredAyah)
-                <section aria-label="Ayat Terpilih" class="rounded-card bg-brand-navy text-white p-6 sm:p-7 shadow-md space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5">
-                            <span class="px-3 py-0.5 rounded-full bg-brand-gold text-brand-navy text-label-sm font-bold">
-                                Ayat Terpilih
-                            </span>
-                            <h2 class="text-title-md font-bold text-white">
-                                Ayat Kursi — QS. Al-Baqarah: 255
-                            </h2>
-                        </div>
-
-                        <a
-                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                            wire:navigate
-                            class="inline-flex items-center gap-1.5 text-label-md font-semibold text-brand-gold hover:underline"
-                        >
-                            <span>Buka Langsung Ayat 255</span>
-                            <span aria-hidden="true">&#8599;</span>
-                        </a>
-                    </div>
-
-                    <p class="quran-arabic text-brand-gold text-right leading-[2.2]" dir="rtl" lang="ar">
-                        {{ \Illuminate\Support\Str::words($featuredAyah->teks_arab, 18, ' ...') }}
-                    </p>
-
-                    <p class="text-body-sm text-brand-gold-pale/90 italic leading-relaxed">
-                        "{{ \Illuminate\Support\Str::limit($featuredAyah->terjemahan, 160) }}"
-                    </p>
-                </section>
-            @endif
-
             {{-- Footer Navigasi Ayat & Halaman Berikutnya --}}
-            <nav aria-label="Navigasi Halaman Ayat" class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-body-sm text-ink-muted">
+            <nav aria-label="Navigasi Halaman Ayat" class="pt-6 border-t border-line/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-body-sm text-ink-muted text-center sm:text-left sm:whitespace-nowrap leading-relaxed">
                     Menampilkan Ayat <strong class="font-semibold text-ink">{{ $ayahs->firstItem() ?? 1 }} - {{ $ayahs->lastItem() ?? $surah->jumlah_ayat }}</strong> dari <strong class="font-semibold text-ink">{{ $surah->jumlah_ayat }} Ayat</strong>
                 </p>
 
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center sm:justify-end gap-2.5 sm:gap-3 w-full sm:w-auto">
                     @if (! $ayahs->onFirstPage())
                         <a
                             href="{{ $ayahs->previousPageUrl() }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition shadow-sm w-full sm:w-auto"
                         >
-                            <span aria-hidden="true">&larr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
                             <span>Ayat Sebelumnya</span>
                         </a>
                     @elseif ($previousSurah)
                         <a
                             href="{{ route('quran.show', $previousSurah->id) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition shadow-sm w-full sm:w-auto"
                         >
-                            <span aria-hidden="true">&larr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
                             <span>QS. {{ $previousSurah->nama_latin }}</span>
                         </a>
                     @endif
@@ -655,52 +577,28 @@
                         <a
                             href="{{ $ayahs->nextPageUrl() }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-surface-card border border-line text-body-sm font-semibold text-ink hover:border-brand-teal transition"
-                        >
-                            <span>Tampilkan 20 Ayat Berikutnya</span>
-                        </a>
-
-                        <a
-                            href="{{ $ayahs->nextPageUrl() }}"
-                            wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:opacity-90 transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:bg-brand-navy transition shadow-sm w-full sm:w-auto"
                         >
                             <span>Halaman Berikutnya (Hal. {{ $ayahs->currentPage() + 1 }})</span>
-                            <span aria-hidden="true">&rarr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
                         </a>
                     @elseif ($nextSurah)
                         <a
                             href="{{ route('quran.show', $nextSurah->id) }}"
                             wire:navigate
-                            class="inline-flex items-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:opacity-90 transition"
+                            class="inline-flex items-center justify-center gap-2 min-h-[42px] px-5 py-2 rounded-full bg-brand-teal text-white text-body-sm font-semibold hover:bg-brand-navy transition shadow-sm w-full sm:w-auto"
                         >
                             <span>Surah Berikutnya: {{ $nextSurah->nama_latin }}</span>
-                            <span aria-hidden="true">&rarr;</span>
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
                         </a>
                     @endif
                 </div>
             </nav>
         </div>
     </div>
-
-    @auth
-        @if ($ayahs->isNotEmpty())
-            <script>
-                (function () {
-                    try {
-                        fetch('{{ route('terakhir-dibaca.store', $surah->id) }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ ayah_id: {{ $ayahs->first()->id }} })
-                        }).catch(function () {});
-                    } catch (e) {}
-                })();
-            </script>
-        @endif
-    @endauth
 </x-app-layout>
 
