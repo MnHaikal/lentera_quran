@@ -17,7 +17,12 @@ class QuranController extends Controller
         $filter = (string) $request->query('filter', 'semua');
         $juz = $request->integer('juz');
         $search = trim((string) $request->query('q', ''));
-        $sort = $request->query('sort') === 'desc' ? 'desc' : 'asc';
+        $rawSort = (string) $request->query('sort', 'nomor');
+        $sort = match ($rawSort) {
+            'desc' => 'nomor-desc',
+            'asc' => 'nomor',
+            default => $rawSort,
+        };
 
         $query = Surah::query()
             ->withMin('ayahs', 'juz')
@@ -25,8 +30,16 @@ class QuranController extends Controller
 
         $this->applySurahFilters($query, $filter, $juz, $search);
 
+        match ($sort) {
+            'nomor-desc' => $query->orderBy('id', 'desc'),
+            'nama', 'nama-asc' => $query->orderBy('nama_latin', 'asc'),
+            'nama-desc' => $query->orderBy('nama_latin', 'desc'),
+            'ayat-desc' => $query->orderBy('jumlah_ayat', 'desc')->orderBy('id', 'asc'),
+            'ayat-asc' => $query->orderBy('jumlah_ayat', 'asc')->orderBy('id', 'asc'),
+            default => $query->orderBy('id', 'asc'),
+        };
+
         $surahs = $query
-            ->orderBy('id', $sort)
             ->paginate(24)
             ->withQueryString();
 

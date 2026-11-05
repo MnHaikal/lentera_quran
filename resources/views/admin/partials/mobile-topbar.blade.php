@@ -5,9 +5,8 @@
         <div class="w-8 h-8 rounded-full bg-[#1C5868] border border-[#4AB3BF]/40 flex items-center justify-center text-xs font-bold text-white shrink-0">
             {{ strtoupper(substr(Auth::user()?->name ?? 'SA', 0, 2)) }}
         </div>
-        <div class="leading-tight">
-            <p class="text-xs font-bold text-white">{{ Auth::user()?->name ?? 'Super Admin' }}</p>
-            <p class="text-[10px] text-[#7CE3B3] font-bold uppercase">{{ Auth::user()?->role?->isSuperAdmin() ? 'Super Admin' : 'Admin' }}</p>
+        <div class="leading-tight min-w-0">
+            <p class="text-xs font-bold text-white truncate">{{ Auth::user()?->name ?? 'Super Admin' }}</p>
         </div>
     </div>
 

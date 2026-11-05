@@ -14,10 +14,6 @@
                 <p class="text-xs font-bold text-white truncate leading-snug">
                     {{ Auth::user()?->name ?? 'Super Admin' }}
                 </p>
-                <p class="text-[10px] font-bold tracking-wider uppercase text-[#7CE3B3] flex items-center gap-1 mt-0.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#7CE3B3]"></span>
-                    <span>{{ Auth::user()?->role?->isSuperAdmin() ? 'SUPER ADMIN' : 'ADMIN' }}</span>
-                </p>
             </div>
         </div>
 
