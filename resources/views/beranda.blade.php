@@ -106,10 +106,9 @@
                             <a
                                 href="{{ route('quran.show', ['surah' => $lastSurah->id, 'ayat' => $lastAyah->nomor_ayat]) }}"
                                 wire:navigate
-                                class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
+                                class="inline-flex items-center justify-center min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
                             >
                                 <span>Lanjutkan</span>
-                                <span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                     @else
@@ -127,11 +126,6 @@
                             <h2 class="text-headline-sm text-ink font-bold">Lanjutkan Bacaan Terakhir</h2>
 
                             <div class="rounded-xl bg-surface-low border border-line p-5 text-center space-y-2">
-                                <div class="w-10 h-10 mx-auto rounded-full bg-brand-gold/15 flex items-center justify-center text-brand-gold">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </div>
                                 <p class="text-body-md font-bold text-ink">Belum Ada Penanda Ayat</p>
                                 <p class="text-body-sm text-ink-muted max-w-xs mx-auto">
                                     Tandai ayat dengan ikon penanda saat membaca Al-Qur'an untuk menyimpan bacaan terakhir Anda di sini.
@@ -139,79 +133,120 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between pt-1">
-                            <span class="text-body-sm text-ink-muted">114 Surah Tersedia</span>
+                        <div class="flex items-center justify-end pt-1">
                             <a
                                 href="{{ route('quran.index') }}"
                                 wire:navigate
-                                class="inline-flex items-center gap-2 min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition"
+                                class="inline-flex items-center justify-center min-h-[40px] px-5 py-2 rounded-full bg-brand-gold text-brand-navy text-body-sm font-semibold hover:bg-brand-gold-hover transition shadow-xs"
                             >
                                 <span>Mulai Membaca</span>
-                                <span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                     @endif
                 </div>
 
-                {{-- Kartu Kanan: Ayat Harian --}}
+                {{-- Kartu Kanan: Murottal Terakhir Didengar --}}
+                @php
+                    $murottalData = $latestMurottal;
+                    $murottalSurah = $murottalData['surah'] ?? null;
+                    $murottalAyah = $murottalData['ayah'] ?? null;
+                    $murottalAyahNumber = $murottalData['ayah_number'] ?? null;
+                    $murottalAudioUrl = $murottalData['audio_url'] ?? null;
+                    $murottalQari = $murottalData['qari'] ?? 'Misyari Rasyid Al-Afasi';
+                    $isPlayingCondition = ($murottalSurah && $murottalAyahNumber)
+                        ? '$store.audioPlayer && $store.audioPlayer.isCurrentAyah(' . $murottalSurah->id . ', ' . $murottalAyahNumber . ') && $store.audioPlayer.isPlaying'
+                        : ($murottalSurah ? '$store.audioPlayer && $store.audioPlayer.isCurrentSurah(' . $murottalSurah->id . ') && !$store.audioPlayer.ayahNumber && $store.audioPlayer.isPlaying' : 'false');
+                @endphp
+
                 <div class="lg:col-span-7 lq-card flex flex-col justify-between space-y-4">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold-pale text-brand-navy text-label-sm font-semibold">
-                            <span class="text-brand-gold">&#10022;</span> Ayat Harian
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/10 text-brand-teal text-label-sm font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
+                            </svg>
+                            Murottal Terakhir
                         </span>
-                        <a
-                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                            wire:navigate
-                            class="text-label-sm text-ink-muted hover:text-brand-teal font-medium transition"
-                        >
-                            QS. {{ $dailyAyah?->surah?->nama_latin ?? 'Al-Baqarah' }} · {{ $dailyAyah?->nomor_ayat ?? 255 }}
-                        </a>
+                        @if ($murottalSurah)
+                            <a
+                                href="{{ route('quran.show', ['surah' => $murottalSurah->id] + ($murottalAyahNumber ? ['ayat' => $murottalAyahNumber] : [])) }}"
+                                wire:navigate
+                                class="text-label-sm text-ink-muted hover:text-brand-teal font-medium transition"
+                            >
+                                QS. {{ $murottalSurah->nama_latin }} · {{ $murottalAyahNumber ? $murottalAyahNumber : 'Surah Penuh' }}
+                            </a>
+                        @endif
                     </div>
 
                     <p class="quran-arabic text-ink text-right py-1" dir="rtl" lang="ar">
-                        {{ $dailyAyah ? \Illuminate\Support\Str::words($dailyAyah->teks_arab, 10, ' ...') : 'اللّٰهُ لَآ اِلٰهَ اِلَّا هُوَ الْحَيُّ الْقَيُّوْمُ' }}
+                        {{ $murottalAyah ? \Illuminate\Support\Str::words($murottalAyah->teks_arab, 12, ' ...') : ($murottalSurah->nama_arab ?? 'اللّٰهُ لَآ اِلٰهَ اِلَّا هُوَ الْحَيُّ الْقَيُّوْمُ') }}
                     </p>
 
                     <div class="space-y-1.5">
                         <p class="text-body-sm text-brand-teal italic">
-                            {{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->teks_latin, 95) : 'Allāhu lā ilāha illā huwal-ḥayyul-qayyūm(u)...' }}
+                            {{ $murottalAyah ? \Illuminate\Support\Str::limit($murottalAyah->teks_latin, 95) : ($murottalSurah ? $murottalSurah->nama_latin . ' (' . $murottalSurah->arti . ')' : 'Allāhu lā ilāha illā huwal-ḥayyul-qayyūm(u)...') }}
                         </p>
                         <p class="text-body-sm text-ink-muted leading-relaxed">
-                            "{{ $dailyAyah ? \Illuminate\Support\Str::limit($dailyAyah->terjemahan, 165) : 'Allah, tidak ada tuhan selain Dia, Yang Maha Hidup lagi terus-menerus mengurus (makhluk-Nya)...' }}"
+                            "{{ $murottalAyah ? \Illuminate\Support\Str::limit($murottalAyah->terjemahan, 165) : ($murottalSurah ? \Illuminate\Support\Str::limit($murottalSurah->deskripsi ?? $murottalSurah->arti, 165) : 'Allah, tidak ada tuhan selain Dia, Yang Maha Hidup lagi terus-menerus mengurus (makhluk-Nya)...') }}"
                         </p>
                     </div>
 
                     <div class="flex items-center justify-between pt-2 border-t border-line/60">
                         <div class="flex items-center gap-2">
-                            @if ($dailyAyah?->audio_url)
+                            @if ($murottalAudioUrl && $murottalSurah)
                                 <button
                                     type="button"
                                     x-data
-                                    @click="$store.audioPlayer.playTrack({ surahId: 2, surahName: 'Al-Baqarah', ayahNumber: 255, totalAyat: 286, src: '{{ $dailyAyah->audio_url }}' })"
-                                    class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-semibold text-ink hover:border-brand-teal transition"
+                                    @click="$store.audioPlayer.playTrack({
+                                        surahId: {{ $murottalSurah->id }},
+                                        surahName: '{{ addslashes($murottalSurah->nama_latin) }}',
+                                        ayahNumber: {{ $murottalAyahNumber ? $murottalAyahNumber : 'null' }},
+                                        totalAyat: {{ $murottalSurah->jumlah_ayat }},
+                                        src: '{{ $murottalAudioUrl }}',
+                                        qariName: '{{ addslashes($murottalQari) }}'
+                                    })"
+                                    class="inline-flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-full text-label-md font-semibold transition cursor-pointer"
+                                    :class="{{ $isPlayingCondition }}
+                                        ? 'bg-brand-navy text-white'
+                                        : 'bg-surface-low border border-line text-ink hover:border-brand-teal'"
                                 >
-                                    <span class="text-brand-teal">&#9654;</span> Putar
+                                    <span x-show="!({{ $isPlayingCondition }})" class="inline-flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                                        </svg>
+                                        <span>Putar</span>
+                                    </span>
+                                    <span x-show="{{ $isPlayingCondition }}" style="display: none;" class="inline-flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M5.5 3.5A1.5 1.5 0 017 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5zm9 0A1.5 1.5 0 0116 5v10a1.5 1.5 0 01-3 0V5a1.5 1.5 0 011.5-1.5z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Jeda</span>
+                                    </span>
                                 </button>
                             @endif
-                            <a
-                                href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                                wire:navigate
-                                class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1 rounded-full bg-surface-low border border-line text-label-sm font-medium text-ink-muted hover:text-ink transition"
-                            >
-                                Baca Lengkap
-                            </a>
+
+                            @if ($murottalSurah)
+                                <a
+                                    href="{{ route('quran.show', ['surah' => $murottalSurah->id] + ($murottalAyahNumber ? ['ayat' => $murottalAyahNumber] : [])) }}"
+                                    wire:navigate
+                                    class="inline-flex items-center gap-1.5 min-h-[36px] px-3.5 py-1.5 rounded-full text-label-sm font-semibold transition shrink-0 bg-surface-low hover:bg-[#B9892E] text-brand-navy dark:text-ink hover:text-white dark:hover:text-white cursor-pointer"
+                                >
+                                    <span>Baca Lengkap</span>
+                                </a>
+                            @endif
                         </div>
 
-                        <a
-                            href="{{ route('quran.show', ['surah' => 2, 'ayat' => 255]) }}"
-                            wire:navigate
-                            aria-label="Buka Ayat Harian"
-                            class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold transition"
-                        >
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                            </svg>
-                        </a>
+                        @if ($murottalSurah)
+                            <a
+                                href="{{ route('quran.show', ['surah' => $murottalSurah->id] + ($murottalAyahNumber ? ['ayat' => $murottalAyahNumber] : [])) }}"
+                                wire:navigate
+                                aria-label="Buka Murottal {{ $murottalSurah->nama_latin }}"
+                                class="inline-flex items-center justify-center w-9 h-9 rounded-full text-ink-muted hover:text-brand-gold transition"
+                            >
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                                </svg>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </section>

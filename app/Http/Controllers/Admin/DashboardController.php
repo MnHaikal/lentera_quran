@@ -54,6 +54,25 @@ class DashboardController extends Controller
             ? Bookmark::query()->where('bookmarkable_type', 'surah')->where('bookmarkable_id', $favoriteSurah->id)->count()
             : 0;
 
+        // Real Data Doa Terfavorit (dari bookmark doa)
+        $favoriteDoaId = Bookmark::query()->where('bookmarkable_type', 'doa')
+            ->selectRaw('bookmarkable_id, count(*) as total')
+            ->groupBy('bookmarkable_id')
+            ->orderByDesc('total')
+            ->value('bookmarkable_id');
+
+        $favoriteDoa = $favoriteDoaId
+            ? Doa::with('doaCategory')->find($favoriteDoaId)
+            : Doa::with('doaCategory')->first();
+
+        $favoriteDoaBookmarks = $favoriteDoa
+            ? Bookmark::query()->where('bookmarkable_type', 'doa')->where('bookmarkable_id', $favoriteDoa->id)->count()
+            : 0;
+
+        $favoriteDoaProgressPercent = $favoriteDoaBookmarks > 0
+            ? min(100, max(30, $favoriteDoaBookmarks * 25))
+            : 65;
+
         // Data Real Surah yang Paling Banyak Didengar Audio / Murottalnya
         $topStreamed = MurottalStreamLog::query()
             ->selectRaw('surah_id, SUM(duration_seconds) as total_seconds, COUNT(*) as total_plays')
@@ -107,6 +126,9 @@ class DashboardController extends Controller
             'notesCount' => $notesCount,
             'favoriteSurah' => $favoriteSurah,
             'favoriteSurahBookmarks' => $favoriteSurahBookmarks,
+            'favoriteDoa' => $favoriteDoa,
+            'favoriteDoaBookmarks' => $favoriteDoaBookmarks,
+            'favoriteDoaProgressPercent' => $favoriteDoaProgressPercent,
             'mostStreamedSurah' => $mostStreamedSurah,
             'mostStreamedDurationText' => $mostStreamedDurationText,
             'mostStreamedSubtitle' => $mostStreamedSubtitle,

@@ -33,9 +33,15 @@ class NewPasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __($status)]);
+        if ($status === Password::PASSWORD_RESET) {
+            if (auth()->check()) {
+                return redirect()->route('profile.edit')->with('success', 'Kata sandi akun Anda berhasil diperbarui.');
+            }
+
+            return redirect()->route('login')->with('status', __($status));
+        }
+
+        return back()->withInput($request->only('email'))
+            ->withErrors(['email' => __($status)]);
     }
 }

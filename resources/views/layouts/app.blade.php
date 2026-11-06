@@ -25,7 +25,15 @@
         <div class="min-h-screen flex flex-col">
             <x-navbar />
 
-            @if (session('success'))
+            @php
+                $flashSuccess = session('success') ?? (
+                    (!request()->routeIs('login', 'password.*', 'verification.*') && session('status') && !in_array(session('status'), ['verification-link-sent', 'password-updated'], true))
+                        ? session('status')
+                        : null
+                );
+            @endphp
+
+            @if ($flashSuccess)
                 <div class="fixed top-24 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
                     <div
                         x-data="{ show: true }"
@@ -45,7 +53,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </span>
-                            <p class="text-body-sm font-semibold leading-snug">{{ session('success') }}</p>
+                            <p class="text-body-sm font-semibold leading-snug">{{ $flashSuccess }}</p>
                         </div>
                         <button @click="show = false" aria-label="Tutup notifikasi" class="text-white/70 hover:text-white p-1.5 rounded-lg transition shrink-0">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

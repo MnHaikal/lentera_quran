@@ -131,9 +131,37 @@
         let streamTimer = null;
         let lastPlayedTime = 0;
         let accumulatedSeconds = 0;
+        let lastPingedTrackKey = null;
 
         function getAudioEl() {
             return document.getElementById('lentera-audio-element');
+        }
+
+        function sendImmediatePing() {
+            const player = window.Alpine?.store?.('audioPlayer');
+            if (!player || !player.surahId) return;
+
+            const currentKey = `${player.surahId}_${player.ayahNumber || 'full'}`;
+            if (lastPingedTrackKey === currentKey) return;
+            lastPingedTrackKey = currentKey;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) return;
+
+            fetch('{{ route("quran.audio-stream-ping") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    surah_id: player.surahId,
+                    ayah_number: player.ayahNumber || null,
+                    duration_seconds: 1,
+                    qari: player.qariName || 'Misyari Rasyid Al-Afasi'
+                })
+            }).catch(function() {});
         }
 
         function sendStreamPing() {
@@ -169,6 +197,7 @@
 
             audio.addEventListener('play', function() {
                 lastPlayedTime = audio.currentTime;
+                sendImmediatePing();
                 if (!streamTimer) {
                     streamTimer = setInterval(function() {
                         if (!audio.paused && !audio.ended) {
