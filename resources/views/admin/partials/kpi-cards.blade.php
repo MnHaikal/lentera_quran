@@ -68,7 +68,6 @@
             <p :class="darkPreview ? 'text-[#A9BDD3]' : 'text-[#6E7E8D]'" class="text-[11px] text-[#6E7E8D] mt-0.5 truncate">
                 {{ ($favoriteSurahBookmarks ?? 0) > 0 ? ($favoriteSurahBookmarks . ' penanda jamaah') : (($favoriteSurah->jumlah_ayat ?? 286) . ' Ayat') }} &bull; {{ ucfirst($favoriteSurah->tempat_turun->value ?? ($favoriteSurah->tempat_turun ?? 'Madinah')) }}
             </p>
-            </p>
         </div>
 
         <div class="h-1.5 w-full rounded-full bg-[#F2EFE4] overflow-hidden mt-3">
