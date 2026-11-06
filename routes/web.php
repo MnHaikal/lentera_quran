@@ -64,6 +64,10 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/name', [ProfileController::class, 'updateName'])->name('profile.update-name');
+    Route::post('/profile/send-password-reset-link', [ProfileController::class, 'sendPasswordResetLink'])->name('profile.send-password-reset-link');
+    Route::post('/profile/email/send-otp', [ProfileController::class, 'sendEmailOtp'])->name('profile.email.send-otp');
+    Route::post('/profile/email/verify-otp', [ProfileController::class, 'verifyEmailOtp'])->name('profile.email.verify-otp');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

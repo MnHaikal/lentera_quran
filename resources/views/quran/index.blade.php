@@ -49,12 +49,32 @@
             </p>
         </section>
 
+        @php
+            $quranSortOptions = [
+                'nomor' => 'Nomor Surah (1–114)',
+                'nomor-desc' => 'Nomor Terbalik (114–1)',
+                'nama' => 'Nama Surah (A–Z)',
+                'nama-desc' => 'Nama Surah (Z–A)',
+                'ayat-desc' => 'Jumlah Ayat Terbanyak',
+                'ayat-asc' => 'Jumlah Ayat Tersedikit',
+            ];
+            $activeSortKey = match ($sortDirection) {
+                'desc', 'nomor-desc' => 'nomor-desc',
+                'nama', 'nama-asc' => 'nama',
+                'nama-desc' => 'nama-desc',
+                'ayat-desc' => 'ayat-desc',
+                'ayat-asc' => 'ayat-asc',
+                default => 'nomor',
+            };
+            $currentSortLabel = $quranSortOptions[$activeSortKey] ?? 'Nomor Surah (1–114)';
+        @endphp
+
         {{-- Panel Filter & Pencarian --}}
         <section aria-label="Filter dan Pencarian Surah" class="lq-card space-y-4">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div class="flex flex-wrap items-center gap-2">
                     <a
-                        href="{{ route('quran.index', array_filter(['q' => $searchQuery, 'sort' => $sortDirection !== 'asc' ? $sortDirection : null])) }}"
+                        href="{{ route('quran.index', array_filter(['q' => $searchQuery, 'sort' => $activeSortKey !== 'nomor' ? $activeSortKey : null])) }}"
                         wire:navigate
                         class="inline-flex items-center min-h-[40px] px-5 py-2 rounded-full text-body-sm font-semibold transition {{ $activeFilter === 'semua' && !$activeJuz ? 'bg-[#B9892E] text-white shadow-sm' : 'text-ink hover:bg-surface-low' }}"
                     >
@@ -62,7 +82,7 @@
                     </a>
 
                     <a
-                        href="{{ route('quran.index', array_filter(['filter' => 'juz-amma', 'q' => $searchQuery, 'sort' => $sortDirection !== 'asc' ? $sortDirection : null])) }}"
+                        href="{{ route('quran.index', array_filter(['filter' => 'juz-amma', 'q' => $searchQuery, 'sort' => $activeSortKey !== 'nomor' ? $activeSortKey : null])) }}"
                         wire:navigate
                         class="inline-flex items-center min-h-[40px] px-4 py-2 rounded-full text-body-sm font-semibold transition {{ $activeFilter === 'juz-amma' ? 'bg-[#B9892E] text-white shadow-sm' : 'text-ink hover:bg-surface-low' }}"
                     >
@@ -91,7 +111,7 @@
                         >
                             @for ($j = 1; $j <= 30; $j++)
                                 <a
-                                    href="{{ route('quran.index', ['juz' => $j]) }}"
+                                    href="{{ route('quran.index', array_filter(['juz' => $j, 'q' => $searchQuery, 'sort' => $activeSortKey !== 'nomor' ? $activeSortKey : null])) }}"
                                     wire:navigate
                                     class="inline-flex items-center justify-center h-8 rounded-lg text-label-md font-semibold transition {{ $activeJuz === $j ? 'bg-brand-navy text-white' : 'bg-surface-low text-ink hover:border hover:border-brand-gold' }}"
                                 >
@@ -102,7 +122,7 @@
                     </div>
 
                     <a
-                        href="{{ route('quran.index', array_filter(['filter' => 'mekah', 'q' => $searchQuery, 'sort' => $sortDirection !== 'asc' ? $sortDirection : null])) }}"
+                        href="{{ route('quran.index', array_filter(['filter' => 'mekah', 'q' => $searchQuery, 'sort' => $activeSortKey !== 'nomor' ? $activeSortKey : null])) }}"
                         wire:navigate
                         class="inline-flex items-center min-h-[40px] px-4 py-2 rounded-full text-body-sm font-semibold transition {{ $activeFilter === 'mekah' ? 'bg-[#B9892E] text-white shadow-sm' : 'text-ink hover:bg-surface-low' }}"
                     >
@@ -110,7 +130,7 @@
                     </a>
 
                     <a
-                        href="{{ route('quran.index', array_filter(['filter' => 'madinah', 'q' => $searchQuery, 'sort' => $sortDirection !== 'asc' ? $sortDirection : null])) }}"
+                        href="{{ route('quran.index', array_filter(['filter' => 'madinah', 'q' => $searchQuery, 'sort' => $activeSortKey !== 'nomor' ? $activeSortKey : null])) }}"
                         wire:navigate
                         class="inline-flex items-center min-h-[40px] px-4 py-2 rounded-full text-body-sm font-semibold transition {{ $activeFilter === 'madinah' ? 'bg-[#B9892E] text-white shadow-sm' : 'text-ink hover:bg-surface-low' }}"
                     >
@@ -127,8 +147,8 @@
                     @if ($activeJuz)
                         <input type="hidden" name="juz" value="{{ $activeJuz }}">
                     @endif
-                    @if ($sortDirection !== 'asc')
-                        <input type="hidden" name="sort" value="{{ $sortDirection }}">
+                    @if ($activeSortKey !== 'nomor')
+                        <input type="hidden" name="sort" value="{{ $activeSortKey }}">
                     @endif
 
                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -152,17 +172,51 @@
                     </button>
                 </form>
 
-                <div class="flex items-center justify-end gap-2.5">
-                    <a
-                        href="{{ route('quran.index', array_filter(['filter' => $activeFilter !== 'semua' ? $activeFilter : null, 'juz' => $activeJuz, 'q' => $searchQuery, 'sort' => $sortDirection === 'asc' ? 'desc' : null])) }}"
-                        wire:navigate
-                        class="inline-flex items-center gap-2 min-h-[40px] px-4 py-1.5 rounded-full bg-surface-low border border-line text-body-sm text-ink hover:border-brand-teal transition"
-                    >
-                        <span>Urutkan: <strong class="font-semibold">Nomor ({{ $sortDirection === 'asc' ? 'Naik' : 'Turun' }})</strong></span>
-                        <svg class="w-3.5 h-3.5 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </a>
+                <div class="flex items-center justify-end" x-data="{ sortDropdownOpen: false }">
+                    <div class="relative inline-flex items-center">
+                        <button
+                            type="button"
+                            @click="sortDropdownOpen = !sortDropdownOpen"
+                            @keydown.escape.window="sortDropdownOpen = false"
+                            class="inline-flex items-center gap-2 min-h-[40px] px-4 py-1.5 rounded-full bg-surface-low border border-line text-body-sm text-ink hover:border-brand-teal transition cursor-pointer"
+                            aria-haspopup="true"
+                            :aria-expanded="sortDropdownOpen"
+                        >
+                            <span>Urutkan: <strong class="font-semibold text-ink">{{ $currentSortLabel }}</strong></span>
+                            <svg class="w-3.5 h-3.5 text-ink-muted transition-transform duration-150" :class="sortDropdownOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div
+                            x-show="sortDropdownOpen"
+                            @click.outside="sortDropdownOpen = false"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            style="display: none;"
+                            class="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-surface-card border border-line shadow-card p-1.5 z-50 text-body-sm"
+                        >
+                            @foreach ($quranSortOptions as $sortKey => $sortLabel)
+                                <a
+                                    href="{{ route('quran.index', array_filter(['filter' => $activeFilter !== 'semua' ? $activeFilter : null, 'juz' => $activeJuz, 'q' => $searchQuery, 'sort' => $sortKey !== 'nomor' ? $sortKey : null])) }}"
+                                    wire:navigate
+                                    @click="sortDropdownOpen = false"
+                                    class="flex items-center justify-between px-3.5 py-2 rounded-xl hover:bg-surface-low transition {{ $activeSortKey === $sortKey ? 'font-bold text-brand-teal bg-brand-teal/5' : 'text-ink' }}"
+                                >
+                                    <span>{{ $sortLabel }}</span>
+                                    @if ($activeSortKey === $sortKey)
+                                        <svg class="w-4 h-4 text-brand-teal shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
